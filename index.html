@@ -1,115 +1,440 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trívia - Tecnologia que responde</title>
-
+<title>TRÍVIA — Atendimento que parece gente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0a0a0a;
-    color: white;
-}
+  :root{
+    --bg:#06070a;
+    --bg2:#0b0d14;
+    --panel:#0e1119;
+    --line:rgba(255,255,255,.08);
+    --txt:#e8ecf4;
+    --muted:#7e879c;
+    --neon:#3df5c4;
+    --neon2:#5b8cff;
+    --accent:#b46bff;
+    --glow:0 0 40px rgba(61,245,196,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:'Sora',sans-serif;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+  ::selection{background:var(--neon);color:#04110d}
+  .mono{font-family:'Space Mono',monospace}
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 40px 20px;
-}
+  /* ---------- atmosphere ---------- */
+  .grain{
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .orb{position:fixed;border-radius:50%;filter:blur(90px);z-index:0;pointer-events:none;opacity:.4}
+  .orb1{width:480px;height:480px;background:radial-gradient(circle,var(--neon),transparent 70%);top:-160px;right:-120px}
+  .orb2{width:520px;height:520px;background:radial-gradient(circle,var(--neon2),transparent 70%);bottom:-200px;left:-160px;opacity:.3}
 
-.hero {
-    text-align: center;
-    padding: 100px 20px;
-}
+  .wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 28px}
 
-h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-}
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(6,7,10,.7);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .logo{font-weight:800;font-size:1.4rem;letter-spacing:1px;display:flex;align-items:center;gap:10px}
+  .logo .dot{width:11px;height:11px;border-radius:50%;background:var(--neon);box-shadow:var(--glow)}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.92rem;transition:.2s}
+  .nav-links a:hover{color:var(--txt)}
+  .btn{
+    background:var(--neon);color:#04110d;border:none;padding:11px 22px;border-radius:10px;
+    font-family:'Sora';font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;text-decoration:none;display:inline-block;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:var(--glow)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .btn-ghost:hover{border-color:var(--neon);box-shadow:none}
+  @media(max-width:760px){.nav-links a:not(.btn){display:none}}
 
-p {
-    color: #ccc;
-    font-size: 18px;
-}
+  /* ---------- hero ---------- */
+  header{padding:90px 0 70px;position:relative}
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--neon);border:1px solid rgba(61,245,196,.3);padding:6px 14px;border-radius:100px;margin-bottom:28px;
+  }
+  .tag .pulse{width:7px;height:7px;border-radius:50%;background:var(--neon);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  h1{font-size:clamp(2.6rem,6vw,4.6rem);font-weight:800;line-height:1.05;letter-spacing:-1.5px;max-width:14ch}
+  h1 .hl{background:linear-gradient(120deg,var(--neon),var(--neon2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:1.18rem;max-width:48ch;margin:26px 0 38px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-stats{display:flex;gap:44px;margin-top:60px;flex-wrap:wrap}
+  .stat .num{font-size:2rem;font-weight:800;color:var(--neon)}
+  .stat .lbl{color:var(--muted);font-size:.85rem}
 
-.btn {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 15px 25px;
-    background: #d4a037;
-    color: black;
-    text-decoration: none;
-    border-radius: 30px;
-    font-weight: bold;
-}
+  .reveal{opacity:0;transform:translateY(24px);animation:reveal .8s forwards}
+  @keyframes reveal{to{opacity:1;transform:none}}
+  .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}
 
-.section {
-    padding: 60px 0;
-    text-align: center;
-}
+  /* ---------- chat mock ---------- */
+  .chat-demo{
+    margin-top:70px;max-width:420px;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .chat-head{background:#13351f;padding:14px 18px;display:flex;align-items:center;gap:12px}
+  .chat-head .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#04110d}
+  .chat-head .nm{font-weight:700;font-size:.95rem}.chat-head .on{font-size:.74rem;color:var(--neon)}
+  .chat-body{padding:20px;display:flex;flex-direction:column;gap:12px;background:#070b09}
+  .msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:.9rem;animation:reveal .6s forwards;opacity:0}
+  .msg.them{background:#1c2129;border-bottom-left-radius:4px;align-self:flex-start}
+  .msg.me{background:#055e44;border-bottom-right-radius:4px;align-self:flex-end}
+  .m1{animation-delay:.6s}.m2{animation-delay:1.2s}.m3{animation-delay:1.9s}.m4{animation-delay:2.6s}
 
-.card {
-    background: #111;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
-    display: inline-block;
-    width: 250px;
-}
+  /* ---------- sections ---------- */
+  section{padding:90px 0}
+  .eyebrow{color:var(--neon);font-family:'Space Mono';font-size:.82rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+  h2{font-size:clamp(2rem,4vw,2.9rem);font-weight:800;letter-spacing:-1px;max-width:18ch;margin-bottom:18px}
+  .lead{color:var(--muted);max-width:52ch;font-size:1.08rem}
 
-.footer {
-    text-align: center;
-    padding: 20px;
-    color: #777;
-}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:50px}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;transition:.3s;position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-6px);border-color:rgba(61,245,196,.4)}
+  .card .ico{width:46px;height:46px;border-radius:12px;background:rgba(61,245,196,.1);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+  .card h3{font-size:1.2rem;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:.94rem}
+
+  /* ---------- how ---------- */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin-top:50px;counter-reset:s}
+  .step{position:relative;padding-top:30px}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:'Space Mono';font-size:2.6rem;font-weight:700;color:rgba(61,245,196,.25);position:absolute;top:-14px;left:0}
+  .step h4{margin:10px 0 8px;font-size:1.1rem}.step p{color:var(--muted);font-size:.92rem}
+
+  /* ---------- pricing ---------- */
+  .price-box{max-width:440px;margin:50px auto 0;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid rgba(61,245,196,.3);border-radius:22px;padding:40px;text-align:center;box-shadow:0 0 60px rgba(61,245,196,.1)}
+  .price-box .amt{font-size:3.4rem;font-weight:800;color:var(--neon)}
+  .price-box .amt small{font-size:1rem;color:var(--muted);font-weight:400}
+  .price-box ul{list-style:none;text-align:left;margin:26px 0;display:flex;flex-direction:column;gap:12px}
+  .price-box li{display:flex;gap:10px;color:var(--muted);font-size:.95rem}
+  .price-box li::before{content:"→";color:var(--neon)}
+  .price-note{font-size:.84rem;color:var(--muted);margin-top:8px}
+
+  /* ---------- lead form ---------- */
+  .lead-sec{background:linear-gradient(180deg,transparent,rgba(91,140,255,.06))}
+  .form-box{max-width:520px;margin:40px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:36px}
+  .form-box label{display:block;font-size:.85rem;color:var(--muted);margin:16px 0 7px}
+  .form-box input,.form-box select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:13px 14px;color:var(--txt);font-family:'Sora';font-size:.95rem}
+  .form-box input:focus,.form-box select:focus{outline:none;border-color:var(--neon)}
+  .form-box .btn{width:100%;margin-top:24px;padding:15px}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:50px 0;color:var(--muted);font-size:.88rem}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+
+  /* ---------- modal / login ---------- */
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(3,4,7,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.open{display:flex}
+  .modal-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:40px;max-width:400px;width:100%;position:relative;animation:reveal .4s forwards}
+  .modal-card .x{position:absolute;top:18px;right:20px;color:var(--muted);cursor:pointer;font-size:1.4rem;background:none;border:none}
+  .modal-card h3{font-size:1.5rem;margin-bottom:6px}
+  .modal-card .mt{color:var(--muted);font-size:.92rem;margin-bottom:24px}
+  .modal-card label{display:block;font-size:.82rem;color:var(--muted);margin:14px 0 6px}
+  .modal-card input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:13px;color:var(--txt);font-family:'Sora'}
+  .modal-card input:focus{outline:none;border-color:var(--neon)}
+  .modal-card .btn{width:100%;margin-top:22px;padding:14px}
+  .hint{font-size:.78rem;color:var(--muted);margin-top:14px;text-align:center}
+  .err{color:#ff6b6b;font-size:.84rem;margin-top:10px;display:none}
+
+  /* ---------- dashboard ---------- */
+  #dash{display:none;min-height:100vh}
+  .dash-nav{background:var(--panel);border-bottom:1px solid var(--line);padding:0}
+  .dash-nav .nav-in{height:64px}
+  .dash-grid{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px)}
+  .side{background:var(--bg2);border-right:1px solid var(--line);padding:26px 16px}
+  .side a{display:flex;align-items:center;gap:12px;color:var(--muted);text-decoration:none;padding:12px 14px;border-radius:10px;font-size:.92rem;margin-bottom:4px;cursor:pointer;transition:.2s}
+  .side a:hover,.side a.active{background:rgba(61,245,196,.08);color:var(--neon)}
+  .main{padding:36px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .kpi .k{font-size:.82rem;color:var(--muted)}
+  .kpi .v{font-size:2rem;font-weight:800;margin-top:6px}
+  .kpi .v.up{color:var(--neon)}
+  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px}
+  .panel-box h4{margin-bottom:16px;font-size:1.05rem}
+  .row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+  .row:last-child{border:none}
+  .pill{font-size:.74rem;padding:4px 10px;border-radius:100px}
+  .pill.q{background:rgba(61,245,196,.12);color:var(--neon)}
+  .pill.m{background:rgba(255,180,60,.12);color:#ffb43c}
+  .pill.f{background:rgba(126,135,156,.15);color:var(--muted)}
+  .placeholder{color:var(--muted);font-size:.88rem;font-style:italic}
+  @media(max-width:760px){.dash-grid{grid-template-columns:1fr}.side{display:none}}
 </style>
-
 </head>
-
 <body>
+<div class="grain"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
 
-<div class="hero">
-    <h1>Trívia</h1>
-    <p>Tecnologia que responde.</p>
-    <p>Atendimento inteligente no WhatsApp para empresas</p>
+<!-- ============ SITE PÚBLICO ============ -->
+<div id="site">
+  <nav>
+    <div class="wrap nav-in">
+      <div class="logo"><span class="dot"></span>TRÍVIA</div>
+      <div class="nav-links">
+        <a href="#produto">Produto</a>
+        <a href="#como">Como funciona</a>
+        <a href="#preco">Preço</a>
+        <a href="#" onclick="openLogin();return false" class="btn btn-ghost">Entrar</a>
+      </div>
+    </div>
+  </nav>
 
-    <a class="btn" href="https://wa.me/5531995563373" target="_blank">
-        Falar no WhatsApp
-    </a>
+  <header>
+    <div class="wrap">
+      <div class="tag reveal d1"><span class="pulse"></span>Atendimento inteligente no WhatsApp</div>
+      <h1 class="reveal d2">Um atendente que <span class="hl">parece gente</span> — e nunca dorme.</h1>
+      <p class="sub reveal d3">A TRÍVIA coloca uma inteligência conversacional no seu WhatsApp que atende, agenda, vende e cuida do funil. Sem parecer robô. Sem você fazer nada.</p>
+      <div class="hero-cta reveal d4">
+        <a href="#contato" class="btn">Quero pra meu negócio</a>
+        <a href="#como" class="btn btn-ghost">Ver como funciona</a>
+      </div>
+      <div class="hero-stats reveal d4">
+        <div class="stat"><div class="num">24/7</div><div class="lbl">sempre respondendo</div></div>
+        <div class="stat"><div class="num">&lt;5s</div><div class="lbl">tempo de resposta</div></div>
+        <div class="stat"><div class="num">0</div><div class="lbl">linhas de código pra você</div></div>
+      </div>
+
+      <div class="chat-demo reveal d4">
+        <div class="chat-head">
+          <div class="av">M</div>
+          <div><div class="nm">Mel · TRÍVIA</div><div class="on">● online</div></div>
+        </div>
+        <div class="chat-body">
+          <div class="msg them m1">Oi! Que bom te ver por aqui 😊 Me conta, o que você tá procurando hoje?</div>
+          <div class="msg me m2">Queria agendar uma avaliação pra sexta</div>
+          <div class="msg them m3">Perfeito! Sexta eu tenho 14h e 16h30. Qual encaixa melhor pra você?</div>
+          <div class="msg me m4">16h30 tá ótimo</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PRODUTO -->
+  <section id="produto">
+    <div class="wrap">
+      <div class="eyebrow">// o que a TRÍVIA faz</div>
+      <h2>Não é um chatbot. É o seu negócio respondendo sozinho.</h2>
+      <p class="lead">Cada módulo se ativa conforme você precisa — e tudo conversa entre si, dentro de um número só.</p>
+      <div class="grid">
+        <div class="card"><div class="ico">💬</div><h3>Atendimento humano</h3><p>Conversa natural, com memória do cliente. Sem respostas secas, sem cara de robô.</p></div>
+        <div class="card"><div class="ico">📅</div><h3>Agendamento</h3><p>Mostra horários, encaixa, confirma e lembra. A agenda se organiza sozinha.</p></div>
+        <div class="card"><div class="ico">🎯</div><h3>Funil &amp; CRM</h3><p>Classifica leads por temperatura, reativa quem sumiu e avisa você quando tá quente.</p></div>
+        <div class="card"><div class="ico">📣</div><h3>Disparos</h3><p>Campanhas e reativações no timing certo, com a voz do seu negócio.</p></div>
+        <div class="card"><div class="ico">🧾</div><h3>Orçamento &amp; pedidos</h3><p>Monta proposta, calcula, registra pedido — tudo na conversa.</p></div>
+        <div class="card"><div class="ico">📊</div><h3>Painel &amp; relatórios</h3><p>Veja conversas, leads e métricas em tempo real. Aqui mesmo, na área do cliente.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO -->
+  <section id="como" style="background:var(--bg2)">
+    <div class="wrap">
+      <div class="eyebrow">// simples de começar</div>
+      <h2>Do zero ao atendimento ativo em dias, não meses.</h2>
+      <div class="steps">
+        <div class="step"><h4>Conversa inicial</h4><p>A gente entende seu negócio, seu tom e o que você precisa automatizar.</p></div>
+        <div class="step"><h4>Configuração</h4><p>Montamos sua inteligência com a personalidade e as regras do seu negócio.</p></div>
+        <div class="step"><h4>Vai pro ar</h4><p>Conectamos no seu WhatsApp e o atendimento começa a rodar.</p></div>
+        <div class="step"><h4>Você acompanha</h4><p>No painel você vê tudo: conversas, leads, agenda e resultados.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREÇO -->
+  <section id="preco">
+    <div class="wrap" style="text-align:center">
+      <div class="eyebrow">// investimento</div>
+      <h2 style="margin-left:auto;margin-right:auto">Começa simples. Cresce com você.</h2>
+      <div class="price-box">
+        <div class="amt">R$99<small>/mês</small></div>
+        <p style="color:var(--muted);margin-top:6px">plano base — atendimento inteligente no WhatsApp</p>
+        <ul>
+          <li>Inteligência conversacional 24/7</li>
+          <li>Memória e contexto do cliente</li>
+          <li>Acesso ao painel e relatórios</li>
+          <li>Suporte na configuração</li>
+        </ul>
+        <a href="#contato" class="btn">Começar agora</a>
+        <p class="price-note">Módulos como agendamento, disparos e funil são adicionais — a gente conversa pra montar o ideal pro seu negócio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato" class="lead-sec">
+    <div class="wrap" style="text-align:center">
+      <div class="eyebrow">// fala com a gente</div>
+      <h2 style="margin-left:auto;margin-right:auto">Bora colocar isso pra rodar no seu negócio?</h2>
+      <p class="lead" style="margin:0 auto">Deixa seus dados e a gente continua a conversa direto no WhatsApp.</p>
+      <div class="form-box">
+        <label>Seu nome</label>
+        <input id="f-nome" placeholder="Como podemos te chamar?">
+        <label>WhatsApp</label>
+        <input id="f-fone" placeholder="(00) 00000-0000">
+        <label>Tipo de negócio</label>
+        <select id="f-tipo">
+          <option>Salão / Estética</option>
+          <option>Clínica / Saúde</option>
+          <option>Comércio / Varejo</option>
+          <option>Indústria / Fábrica</option>
+          <option>Outro</option>
+        </select>
+        <button class="btn" onclick="enviarLead()">Falar no WhatsApp</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-in">
+      <div><div class="logo" style="margin-bottom:10px"><span class="dot"></span>TRÍVIA</div>Atendimento que parece gente.</div>
+      <div>© 2026 TRÍVIA Tecnologia · WhatsApp (31) 99607-3905</div>
+    </div>
+  </footer>
 </div>
 
-<div class="section">
-    <h2>O que fazemos</h2>
-
-    <div class="card">Atendimento automático 24h</div>
-    <div class="card">Respostas inteligentes</div>
-    <div class="card">Agendamentos</div>
-    <div class="card">Organização de clientes</div>
+<!-- ============ MODAL LOGIN ============ -->
+<div class="modal" id="loginModal">
+  <div class="modal-card">
+    <button class="x" onclick="closeLogin()">×</button>
+    <h3>Área do cliente</h3>
+    <p class="mt">Acesse seu painel de atendimento e relatórios.</p>
+    <label>E-mail</label>
+    <input id="l-email" type="email" placeholder="voce@empresa.com">
+    <label>Senha</label>
+    <input id="l-senha" type="password" placeholder="••••••••">
+    <button class="btn" onclick="fazerLogin()">Entrar</button>
+    <p class="err" id="l-err">E-mail ou senha incorretos.</p>
+    <p class="hint mono">demo: cliente@trivia.com / trivia123</p>
+  </div>
 </div>
 
-<div class="section">
-    <h2>Como funciona</h2>
-    <p>O cliente chama no WhatsApp, a IA responde e organiza tudo para sua empresa.</p>
+<!-- ============ DASHBOARD ============ -->
+<div id="dash">
+  <nav class="dash-nav">
+    <div class="wrap nav-in">
+      <div class="logo"><span class="dot"></span>TRÍVIA</div>
+      <div class="nav-links">
+        <span style="color:var(--muted);font-size:.9rem" id="dash-user">Salão Exemplo</span>
+        <a href="#" onclick="logout();return false" class="btn btn-ghost">Sair</a>
+      </div>
+    </div>
+  </nav>
+  <div class="dash-grid">
+    <aside class="side">
+      <a class="active" onclick="goTab(this,'tab-visao')">📊 Visão geral</a>
+      <a onclick="goTab(this,'tab-conversas')">💬 Conversas</a>
+      <a onclick="goTab(this,'tab-leads')">🎯 Leads &amp; funil</a>
+      <a onclick="goTab(this,'tab-relatorios')">📈 Relatórios</a>
+      <a onclick="goTab(this,'tab-config')">⚙️ Configurações</a>
+    </aside>
+    <main class="main">
+      <!-- VISÃO -->
+      <div id="tab-visao" class="tab">
+        <h2 style="font-size:1.6rem;margin-bottom:24px">Visão geral</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Conversas hoje</div><div class="v up">47</div></div>
+          <div class="kpi"><div class="k">Leads quentes</div><div class="v">8</div></div>
+          <div class="kpi"><div class="k">Agendamentos</div><div class="v">12</div></div>
+          <div class="kpi"><div class="k">Taxa de resposta</div><div class="v up">98%</div></div>
+        </div>
+        <div class="panel-box">
+          <h4>Últimas conversas</h4>
+          <div class="row"><span>Maria Silva — "queria remarcar pra quinta"</span><span class="pill q">quente</span></div>
+          <div class="row"><span>João Pereira — "qual o valor do pacote?"</span><span class="pill m">morno</span></div>
+          <div class="row"><span>Ana Costa — "vi o anúncio de vocês"</span><span class="pill f">frio</span></div>
+        </div>
+      </div>
+      <!-- CONVERSAS -->
+      <div id="tab-conversas" class="tab" style="display:none">
+        <h2 style="font-size:1.6rem;margin-bottom:24px">Conversas</h2>
+        <div class="panel-box"><p class="placeholder">Aqui entram as conversas em tempo real, puxadas do backend por company_id. Pronto pra plugar na API.</p></div>
+      </div>
+      <!-- LEADS -->
+      <div id="tab-leads" class="tab" style="display:none">
+        <h2 style="font-size:1.6rem;margin-bottom:24px">Leads &amp; funil</h2>
+        <div class="panel-box">
+          <h4>Funil por temperatura</h4>
+          <div class="row"><span>🔥 Quentes — prontos pra fechar</span><span class="pill q">8</span></div>
+          <div class="row"><span>🌡️ Mornos — em negociação</span><span class="pill m">15</span></div>
+          <div class="row"><span>❄️ Frios — para reativar</span><span class="pill f">34</span></div>
+        </div>
+      </div>
+      <!-- RELATÓRIOS -->
+      <div id="tab-relatorios" class="tab" style="display:none">
+        <h2 style="font-size:1.6rem;margin-bottom:24px">Relatórios</h2>
+        <div class="panel-box"><p class="placeholder">Gráficos de volume, conversão e horários de pico. Conecta na tabela de mensagens do Supabase.</p></div>
+      </div>
+      <!-- CONFIG -->
+      <div id="tab-config" class="tab" style="display:none">
+        <h2 style="font-size:1.6rem;margin-bottom:24px">Configurações</h2>
+        <div class="panel-box"><p class="placeholder">Tom de voz, horário de funcionamento, mensagens e integrações.</p></div>
+      </div>
+    </main>
+  </div>
 </div>
 
-<div class="section">
-    <h2>Para quem é</h2>
-    <p>Salões, clínicas, comércios e empresas que atendem pelo WhatsApp.</p>
-</div>
+<script>
+  // ---- LOGIN MODAL ----
+  function openLogin(){document.getElementById('loginModal').classList.add('open')}
+  function closeLogin(){document.getElementById('loginModal').classList.remove('open')}
+  document.getElementById('loginModal').addEventListener('click',e=>{if(e.target.id==='loginModal')closeLogin()});
 
-<div class="section">
-    <h2>Comece agora</h2>
+  // ---- LOGIN (mock — troque por chamada à sua API no Railway) ----
+  function fazerLogin(){
+    const email=document.getElementById('l-email').value.trim();
+    const senha=document.getElementById('l-senha').value;
+    // DEMO. No futuro: fetch('https://trivia-webhook-production.up.railway.app/auth', {...})
+    if(email==='cliente@trivia.com' && senha==='trivia123'){
+      document.getElementById('site').style.display='none';
+      document.getElementById('loginModal').classList.remove('open');
+      document.getElementById('dash').style.display='block';
+      window.scrollTo(0,0);
+    }else{
+      document.getElementById('l-err').style.display='block';
+    }
+  }
+  function logout(){
+    document.getElementById('dash').style.display='none';
+    document.getElementById('site').style.display='block';
+  }
 
-    <a class="btn" href="https://wa.me/5531995563373" target="_blank">
-        Solicitar demonstração
-    </a>
-</div>
+  // ---- DASHBOARD TABS ----
+  function goTab(el,id){
+    document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+    document.getElementById(id).style.display='block';
+  }
 
-<div class="footer">
-    © 2026 Trívia - Tecnologia que responde
-</div>
-
+  // ---- LEAD → WHATSAPP ----
+  function enviarLead(){
+    const nome=document.getElementById('f-nome').value.trim()||'(sem nome)';
+    const fone=document.getElementById('f-fone').value.trim();
+    const tipo=document.getElementById('f-tipo').value;
+    const txt=`Olá! Sou ${nome}, tenho um negócio de ${tipo}${fone?` (meu WhatsApp: ${fone})`:''} e quero conhecer a TRÍVIA.`;
+    window.open(`https://wa.me/5531996073905?text=${encodeURIComponent(txt)}`,'_blank');
+  }
+</script>
 </body>
 </html>
