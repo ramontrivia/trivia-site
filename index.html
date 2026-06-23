@@ -327,10 +327,7 @@
     var email=document.getElementById('l-email').value.trim();
     var senha=document.getElementById('l-senha').value;
     if(email==='cliente@trivia.com' && senha==='trivia123'){
-      document.getElementById('site').style.display='none';
-      document.getElementById('loginModal').classList.remove('open');
-      document.getElementById('dash').style.display='block';
-      window.scrollTo(0,0);
+      window.location.href='painel.html';
     }else{document.getElementById('l-err').style.display='block';}
   }
   function logout(){document.getElementById('dash').style.display='none';document.getElementById('site').style.display='block';}
