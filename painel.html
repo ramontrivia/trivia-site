@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel — Trívia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050402;--bg2:#0c0a06;--panel:#11100b;--panel2:#16140d;--line:rgba(212,160,55,.16);
+    --txt:#f2efe6;--muted:#9a948a;--gold:#d4a037;--gold-lt:#f5d77a;
+    --grad-gold:linear-gradient(135deg,#f5d77a 0%,#d4a037 45%,#a8742a 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:'Montserrat',sans-serif;line-height:1.5}
+  ::selection{background:var(--gold);color:#0a0700}
+  .mark{display:inline-flex;align-items:center;gap:10px}
+  .tri{width:30px;height:30px;flex-shrink:0}
+  .tri svg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(212,160,55,.6))}
+  .logo-txt{font-weight:800;font-size:1.3rem;letter-spacing:.5px}
+  .logo-txt .a{color:#fff}.logo-txt .b{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .topnav{background:var(--panel);border-bottom:1px solid var(--line);height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40}
+  .topnav .right{display:flex;align-items:center;gap:16px}
+  .company{display:flex;align-items:center;gap:10px;font-size:.9rem}
+  .company .badge{width:34px;height:34px;border-radius:50%;background:var(--grad-gold);color:#0a0700;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem}
+  .role-switch{display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .role-switch button{background:none;border:none;color:var(--muted);padding:7px 14px;font-family:'Montserrat';font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s}
+  .role-switch button.active{background:rgba(212,160,55,.15);color:var(--gold)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--txt);padding:8px 16px;border-radius:8px;font-family:'Montserrat';font-weight:600;font-size:.82rem;cursor:pointer;text-decoration:none}
+  .btn-ghost:hover{border-color:var(--gold)}
+  .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 62px)}
+  .side{background:var(--bg2);border-right:1px solid var(--line);padding:22px 14px}
+  .side .sec{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:18px 8px 8px;font-weight:600}
+  .side a{display:flex;align-items:center;gap:11px;color:var(--muted);text-decoration:none;padding:11px 14px;border-radius:9px;font-size:.9rem;margin-bottom:3px;cursor:pointer;transition:.2s;font-weight:500}
+  .side a svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+  .side a:hover{background:rgba(212,160,55,.07);color:var(--txt)}
+  .side a.active{background:rgba(212,160,55,.13);color:var(--gold)}
+  .side a.role-recep{display:none}
+  body.view-recep .side a.role-dono{display:none}
+  body.view-recep .side a.role-recep{display:flex}
+  .main{padding:30px;overflow-x:hidden}
+  .page{display:none}.page.active{display:block}
+  .ph{font-size:1.5rem;font-weight:800;margin-bottom:4px}
+  .psub{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:20px}
+  .kpi .k{font-size:.8rem;color:var(--muted)}
+  .kpi .v{font-size:1.9rem;font-weight:800;margin-top:5px}
+  .kpi .v.up{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.side{display:none}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  .card h4{font-size:1rem;margin-bottom:16px;font-weight:600}
+  .chart-wrap{position:relative;height:200px}
+  .funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .funnel-row .lbl{width:90px;font-size:.85rem;color:var(--muted)}
+  .funnel-row .bar{height:20px;border-radius:5px;background:var(--grad-gold)}
+  .funnel-row .val{font-size:.85rem;font-weight:600}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);gap:12px}
+  .row:last-child{border:none}
+  .row .sub{font-size:.82rem;color:var(--muted)}
+  .pill{font-size:.72rem;padding:4px 11px;border-radius:100px;font-weight:600;white-space:nowrap}
+  .pill.q{background:rgba(212,160,55,.18);color:var(--gold-lt)}
+  .pill.m{background:rgba(224,165,88,.15);color:#e0a558}
+  .pill.f{background:rgba(154,148,138,.15);color:var(--muted)}
+  .pill.ok{background:rgba(29,158,117,.15);color:#3fcf9a}
+  .pill.wait{background:rgba(224,165,88,.15);color:#e0a558}
+  .conv-layout{display:grid;grid-template-columns:240px 1fr;gap:16px}
+  @media(max-width:760px){.conv-layout{grid-template-columns:1fr}}
+  .conv-list{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;max-height:520px;overflow-y:auto}
+  .conv-item{padding:11px;border-radius:9px;cursor:pointer;transition:.15s}
+  .conv-item:hover{background:var(--panel2)}
+  .conv-item.active{background:rgba(212,160,55,.1)}
+  .conv-item .top{display:flex;justify-content:space-between}
+  .conv-item .nm{font-size:.9rem;font-weight:600}
+  .conv-item .tm{font-size:.72rem;color:var(--muted)}
+  .conv-item .pv{font-size:.8rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conv-search{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--line);margin-bottom:6px;color:var(--muted);font-size:.85rem}
+  .conv-thread{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .conv-head{display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .conv-head .av{width:38px;height:38px;border-radius:50%;background:var(--grad-gold);color:#0a0700;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem}
+  .conv-head .nm{font-size:.95rem;font-weight:600}
+  .conv-head .meta{font-size:.78rem;color:var(--muted)}
+  .msgs{display:flex;flex-direction:column;gap:9px}
+  .msg{max-width:72%;padding:9px 13px;border-radius:12px;font-size:.86rem}
+  .msg.them{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:3px}
+  .msg.me{align-self:flex-end;background:var(--grad-gold);color:#0a0700;border-bottom-right-radius:3px;font-weight:500}
+  .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.kanban{grid-template-columns:1fr}}
+  .kcol{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .kcol .kh{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .kcol .kh .ic{width:20px;height:20px;stroke-width:2;fill:none}
+  .kcol .kh .ct{margin-left:auto;font-size:.74rem;padding:2px 9px;border-radius:10px}
+  .kcard{background:var(--bg2);padding:11px;border-radius:9px;margin-bottom:8px}
+  .kcard .n{font-size:.86rem;font-weight:600}
+  .kcard .s{font-size:.78rem;color:var(--muted);margin-top:2px}
+  .info-note{display:flex;align-items:center;gap:9px;margin-top:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:.84rem;color:var(--muted)}
+  .cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.cfg-grid{grid-template-columns:1fr}}
+  .cfg-card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;cursor:pointer;transition:.25s}
+  .cfg-card:hover{border-color:rgba(212,160,55,.4);transform:translateY(-3px)}
+  .cfg-card .ch{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .cfg-card .ch svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2}
+  .cfg-card .ch span{font-size:.95rem;font-weight:600}
+  .cfg-card p{font-size:.84rem;color:var(--muted)}
+  .demo-tag{position:fixed;bottom:14px;right:14px;background:rgba(212,160,55,.15);border:1px solid var(--line);color:var(--gold);font-size:.72rem;padding:6px 12px;border-radius:8px;z-index:50}
+</style>
+</head>
+<body class="view-dono">
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="goldgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5d77a"/><stop offset="50%" stop-color="#d4a037"/><stop offset="100%" stop-color="#a8742a"/></linearGradient>
+  <symbol id="trimark" viewBox="0 0 100 100">
+    <polygon points="28,18 82,50 28,82" fill="none" stroke="url(#goldgrad)" stroke-width="5" stroke-linejoin="round"/>
+    <polygon points="38,32 64,50 38,68" fill="none" stroke="url(#goldgrad)" stroke-width="4" stroke-linejoin="round"/>
+    <polygon points="46,42 54,50 46,58" fill="url(#goldgrad)"/>
+  </symbol>
+</defs></svg>
+
+<div class="topnav">
+  <a href="index.html" class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></a>
+  <div class="right">
+    <div class="role-switch">
+      <button id="rb-dono" class="active" onclick="setRole('dono')">Dono</button>
+      <button id="rb-recep" onclick="setRole('recep')">Recepção</button>
+    </div>
+    <div class="company"><span class="badge">SE</span><span>Salão Exemplo</span></div>
+    <a href="index.html" class="btn-ghost">Sair</a>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="sec">Gestão</div>
+    <a class="nav active role-dono" data-page="dashboard" onclick="go(this,'dashboard')"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z"/></svg> Dashboard</a>
+    <a class="nav role-dono" data-page="relatorios" onclick="go(this,'relatorios')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg> Relatórios</a>
+    <a class="nav role-dono" data-page="leads" onclick="go(this,'leads')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Leads e funil</a>
+    <a class="nav role-dono" data-page="pedidos" onclick="go(this,'pedidos')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Pedidos e orçamentos</a>
+    <div class="sec">Operação</div>
+    <a class="nav role-recep" data-page="conversas" onclick="go(this,'conversas')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Conversas</a>
+    <a class="nav role-recep" data-page="agenda" onclick="go(this,'agenda')"><svg viewBox="0 0 24 24"><path d="M3 4h18v18H3zM16 2v4M8 2v4M3 10h18"/></svg> Agenda do dia</a>
+    <a class="nav role-recep" data-page="pedidos" onclick="go(this,'pedidos')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Registrar pedido</a>
+    <div class="sec">Conta</div>
+    <a class="nav role-dono" data-page="config" onclick="go(this,'config')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Configurações</a>
+  </aside>
+
+  <main class="main">
+
+    <div id="dashboard" class="page active">
+      <div class="ph">Dashboard</div>
+      <div class="psub">Visão geral do seu atendimento hoje</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Conversas hoje</div><div class="v up">47</div></div>
+        <div class="kpi"><div class="k">Leads quentes</div><div class="v">8</div></div>
+        <div class="kpi"><div class="k">Agendamentos</div><div class="v">12</div></div>
+        <div class="kpi"><div class="k">Taxa de resposta</div><div class="v up">98%</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h4>Conversas nos últimos 7 dias</h4><div class="chart-wrap"><canvas id="chLine"></canvas></div></div>
+        <div class="card"><h4>Horários de pico</h4><div class="chart-wrap"><canvas id="chBar"></canvas></div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h4>Leads por temperatura</h4><div class="chart-wrap"><canvas id="chDonut"></canvas></div></div>
+        <div class="card"><h4>Funil de conversão</h4>
+          <div class="funnel-row"><span class="lbl">Atrai</span><div class="bar" style="width:100%"></div><span class="val">120</span></div>
+          <div class="funnel-row"><span class="lbl">Entende</span><div class="bar" style="width:73%"></div><span class="val">88</span></div>
+          <div class="funnel-row"><span class="lbl">Aquece</span><div class="bar" style="width:51%"></div><span class="val">61</span></div>
+          <div class="funnel-row"><span class="lbl">Direciona</span><div class="bar" style="width:33%"></div><span class="val">40</span></div>
+          <div class="funnel-row"><span class="lbl">Converte</span><div class="bar" style="width:22%"></div><span class="val">26</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="relatorios" class="page">
+      <div class="ph">Relatórios e métricas</div>
+      <div class="psub">Análise detalhada do seu atendimento</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Conversas no mês</div><div class="v up">1.284</div></div>
+        <div class="kpi"><div class="k">Taxa de conversão</div><div class="v">21%</div></div>
+        <div class="kpi"><div class="k">Tempo médio resposta</div><div class="v">4s</div></div>
+        <div class="kpi"><div class="k">Reativações</div><div class="v">38</div></div>
+      </div>
+      <div class="card"><h4>Conversas e conversões por mês</h4><div class="chart-wrap" style="height:240px"><canvas id="chRep"></canvas></div></div>
+      <div class="grid2">
+        <div class="card"><h4>Origem dos contatos</h4><div class="chart-wrap"><canvas id="chOrigin"></canvas></div></div>
+        <div class="card"><h4>Dias mais movimentados</h4><div class="chart-wrap"><canvas id="chWeek"></canvas></div></div>
+      </div>
+    </div>
+
+    <div id="leads" class="page">
+      <div class="ph">Leads e funil</div>
+      <div class="psub">Seus contatos organizados por temperatura</div>
+      <div class="kanban">
+        <div class="kcol">
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#d4a037"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span style="font-weight:600;font-size:.92rem">Quentes</span><span class="ct" style="background:rgba(212,160,55,.18);color:#f5d77a">8</span></div>
+          <div class="kcard"><div class="n">Maria Silva</div><div class="s">pronta pra fechar</div></div>
+          <div class="kcard"><div class="n">Carlos Dias</div><div class="s">pediu orçamento</div></div>
+          <div class="kcard"><div class="n">Renata Lopes</div><div class="s">quer agendar hoje</div></div>
+        </div>
+        <div class="kcol">
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#e0a558"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg><span style="font-weight:600;font-size:.92rem">Mornos</span><span class="ct" style="background:rgba(224,165,88,.15);color:#e0a558">15</span></div>
+          <div class="kcard"><div class="n">João Pereira</div><div class="s">em negociação</div></div>
+          <div class="kcard"><div class="n">Lúcia Reis</div><div class="s">comparando preço</div></div>
+          <div class="kcard"><div class="n">Marcos Viní</div><div class="s">pediu mais info</div></div>
+        </div>
+        <div class="kcol">
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#9a948a"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg><span style="font-weight:600;font-size:.92rem">Frios</span><span class="ct" style="background:rgba(154,148,138,.15);color:#9a948a">34</span></div>
+          <div class="kcard"><div class="n">Ana Costa</div><div class="s">sumiu há 7 dias</div></div>
+          <div class="kcard"><div class="n">Pedro Alves</div><div class="s">para reativar</div></div>
+          <div class="kcard"><div class="n">Sandra M.</div><div class="s">não respondeu</div></div>
+        </div>
+      </div>
+      <div class="info-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4a037" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg> A Mel move os leads entre as colunas automaticamente e avisa quando alguém esquenta.</div>
+    </div>
+
+    <div id="pedidos" class="page">
+      <div class="ph">Pedidos e orçamentos</div>
+      <div class="psub">Propostas e pedidos gerados no atendimento</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Orçamentos abertos</div><div class="v">6</div></div>
+        <div class="kpi"><div class="k">Pedidos do mês</div><div class="v up">23</div></div>
+        <div class="kpi"><div class="k">Ticket médio</div><div class="v">R$ 180</div></div>
+      </div>
+      <div class="card">
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Maria Silva — Pacote noiva</div><div class="sub">orçamento · R$ 450</div></div><span class="pill wait">aguardando</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">João Pereira — Corte + barba</div><div class="sub">pedido · R$ 80</div></div><span class="pill ok">confirmado</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Lúcia Reis — Coloração</div><div class="sub">orçamento · R$ 220</div></div><span class="pill m">em análise</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Carlos Dias — Day spa</div><div class="sub">pedido · R$ 320</div></div><span class="pill ok">confirmado</span></div>
+      </div>
+    </div>
+
+    <div id="conversas" class="page">
+      <div class="ph">Conversas</div>
+      <div class="psub">Histórico completo de cada atendimento</div>
+      <div class="conv-layout">
+        <div class="conv-list">
+          <div class="conv-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar cliente...</div>
+          <div class="conv-item active" onclick="selConv(this,'Maria Silva','MS','lead quente')"><div class="top"><span class="nm">Maria Silva</span><span class="tm">14:32</span></div><div class="pv">queria remarcar pra quinta</div></div>
+          <div class="conv-item" onclick="selConv(this,'João Pereira','JP','lead morno')"><div class="top"><span class="nm">João Pereira</span><span class="tm">13:10</span></div><div class="pv">qual o valor do pacote?</div></div>
+          <div class="conv-item" onclick="selConv(this,'Ana Costa','AC','lead frio')"><div class="top"><span class="nm">Ana Costa</span><span class="tm">11:48</span></div><div class="pv">vi o anúncio de vocês</div></div>
+          <div class="conv-item" onclick="selConv(this,'Carlos Dias','CD','lead quente')"><div class="top"><span class="nm">Carlos Dias</span><span class="tm">10:22</span></div><div class="pv">quero fechar o day spa</div></div>
+        </div>
+        <div class="conv-thread">
+          <div class="conv-head"><div class="av" id="cv-av">MS</div><div><div class="nm" id="cv-nm">Maria Silva</div><div class="meta" id="cv-meta">+55 31 9xxxx-xxxx · lead quente</div></div></div>
+          <div class="msgs">
+            <div class="msg them">Oi! Que bom te ver por aqui 😊 O que você procura hoje?</div>
+            <div class="msg me">Queria remarcar pra quinta</div>
+            <div class="msg them">Claro! Quinta tenho 15h livre. Confirmo pra você?</div>
+            <div class="msg me">Confirma sim, obrigada!</div>
+            <div class="msg them">Prontinho, agendado pra quinta às 15h. Te espero! ✨</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="agenda" class="page">
+      <div class="ph">Agenda do dia</div>
+      <div class="psub">Atendimentos de hoje</div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Hoje</div><div class="v up">12</div></div>
+        <div class="kpi"><div class="k">Confirmados</div><div class="v">9</div></div>
+        <div class="kpi"><div class="k">Pendentes</div><div class="v">3</div></div>
+      </div>
+      <div class="card">
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">09:00 · Maria Silva</div><div class="sub">Corte + escova</div></div><span class="pill ok">confirmado</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">10:30 · Carlos Dias</div><div class="sub">Day spa</div></div><span class="pill ok">confirmado</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">14:00 · Lúcia Reis</div><div class="sub">Coloração</div></div><span class="pill wait">pendente</span></div>
+        <div class="row"><div><div style="font-weight:600;font-size:.92rem">16:30 · João Pereira</div><div class="sub">Corte + barba</div></div><span class="pill ok">confirmado</span></div>
+      </div>
+    </div>
+
+    <div id="config" class="page">
+      <div class="ph">Configurações avançadas</div>
+      <div class="psub">Ajuste o comportamento da Mel e a operação do negócio</div>
+      <div class="cfg-grid">
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Personalidade da Mel</span></div><p>Tom de voz, jeito de falar e regras de atendimento do seu negócio.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Horário de funcionamento</span></div><p>Dias e horas em que a Mel atende e como responde fora do horário.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg><span>Base de conhecimento</span></div><p>Serviços, preços, dúvidas frequentes e informações do negócio.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg><span>Reativação e disparos</span></div><p>Mensagens automáticas pra quem sumiu e campanhas no timing certo.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Equipe e permissões</span></div><p>Quem acessa o quê — dono, recepção e profissionais.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M10.5 13.5l3-3M9 9l-2 2a3 3 0 0 0 0 4l1 1a3 3 0 0 0 4 0l2-2M15 15l2-2a3 3 0 0 0 0-4l-1-1a3 3 0 0 0-4 0l-2 2"/></svg><span>Integrações</span></div><p>WhatsApp, Instagram e conexões do seu atendimento.</p></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="demo-tag">Etapa 1 · dados de exemplo</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  function go(el,page){
+    document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(page).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function setRole(r){
+    document.body.className = r==='recep' ? 'view-recep' : 'view-dono';
+    document.getElementById('rb-dono').classList.toggle('active',r==='dono');
+    document.getElementById('rb-recep').classList.toggle('active',r==='recep');
+    var first = r==='recep' ? 'conversas' : 'dashboard';
+    document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
+    var firstLink = document.querySelector('.side a[data-page="'+first+'"]');
+    if(firstLink) firstLink.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(first).classList.add('active');
+  }
+  function selConv(el,nm,av,meta){
+    document.querySelectorAll('.conv-item').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('cv-nm').textContent=nm;
+    document.getElementById('cv-av').textContent=av;
+    document.getElementById('cv-meta').textContent='+55 31 9xxxx-xxxx · '+meta;
+  }
+
+  var gold='#d4a037', goldLt='#f5d77a', muted='#9a948a', grid='rgba(212,160,55,.1)';
+  Chart.defaults.color=muted; Chart.defaults.font.family='Montserrat'; Chart.defaults.font.size=11;
+
+  new Chart(document.getElementById('chLine'),{type:'line',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],datasets:[{data:[22,35,28,52,44,61,40],borderColor:gold,backgroundColor:'rgba(212,160,55,.12)',fill:true,tension:.35,pointBackgroundColor:goldLt,pointRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+
+  new Chart(document.getElementById('chBar'),{type:'bar',data:{labels:['8h','10h','12h','14h','16h','18h','20h'],datasets:[{data:[12,28,45,33,52,38,18],backgroundColor:function(c){return c.dataIndex===4?gold:'rgba(212,160,55,.45)'},borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+
+  new Chart(document.getElementById('chDonut'),{type:'doughnut',data:{labels:['Quentes','Mornos','Frios'],datasets:[{data:[8,15,34],backgroundColor:[gold,'#e0a558','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},cutout:'62%',maintainAspectRatio:false}});
+
+  new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Conversas',data:[820,910,1050,980,1180,1284],backgroundColor:'rgba(212,160,55,.35)',borderRadius:5},{label:'Conversões',data:[140,165,210,190,240,270],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+
+  new Chart(document.getElementById('chOrigin'),{type:'doughnut',data:{labels:['WhatsApp','Instagram','Anúncios','Indicação'],datasets:[{data:[58,22,14,6],backgroundColor:[gold,'#e0a558','rgba(212,160,55,.55)','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true}}},cutout:'58%',maintainAspectRatio:false}});
+
+  new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+</script>
+</body>
+</html>
