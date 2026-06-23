@@ -119,6 +119,22 @@
   </symbol>
 </defs></svg>
 
+<div id="loginScreen" style="position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:380px;background:var(--panel);border:1px solid var(--gold);border-radius:18px;padding:40px;box-shadow:0 0 60px rgba(212,160,55,.15)">
+    <div style="display:flex;justify-content:center;margin-bottom:18px"><span class="tri" style="width:48px;height:48px"><svg><use href="#trimark"/></svg></span></div>
+    <h2 style="text-align:center;font-size:1.4rem;font-weight:800;margin-bottom:4px">Área do cliente</h2>
+    <p style="text-align:center;color:var(--muted);font-size:.88rem;margin-bottom:24px">Entre para acessar seu painel</p>
+    <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:6px">E-mail</label>
+    <input id="lg-email" type="email" placeholder="voce@empresa.com" style="width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px;color:var(--txt);font-family:'Montserrat';margin-bottom:14px">
+    <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:6px">Senha</label>
+    <input id="lg-senha" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')entrar()" style="width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px;color:var(--txt);font-family:'Montserrat'">
+    <button onclick="entrar()" id="lg-btn" style="width:100%;margin-top:22px;padding:14px;background:var(--grad-gold);color:#0a0700;border:none;border-radius:8px;font-family:'Montserrat';font-weight:700;font-size:.95rem;cursor:pointer">Entrar</button>
+    <p id="lg-err" style="color:#e8705a;font-size:.84rem;margin-top:12px;text-align:center;display:none"></p>
+  </div>
+</div>
+
+<div id="appWrap" style="display:none">
+
 <div class="topnav">
   <a href="index.html" class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></a>
   <div class="right">
@@ -127,7 +143,7 @@
       <button id="rb-recep" onclick="setRole('recep')">Recepção</button>
     </div>
     <div class="company"><span class="badge">SE</span><span>Salão Exemplo</span></div>
-    <a href="index.html" class="btn-ghost">Sair</a>
+    <a href="#" onclick="sair();return false" class="btn-ghost">Sair</a>
   </div>
 </div>
 
@@ -287,9 +303,61 @@
   </main>
 </div>
 
-<div class="demo-tag">Etapa 1 · dados de exemplo</div>
+<div class="demo-tag">Etapa 2 · login real</div>
+
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ===== CONFIGURAÇÃO SUPABASE =====
+  var SUPABASE_URL = 'https://rcunwbumjyvdyiswuumw.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_vfZG5oGoYYtsU0B2oKPuZQ_MNmNKOM3';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  var chartsIniciados = false;
+
+  async function entrar(){
+    var email = document.getElementById('lg-email').value.trim();
+    var senha = document.getElementById('lg-senha').value;
+    var err = document.getElementById('lg-err');
+    var btn = document.getElementById('lg-btn');
+    err.style.display='none';
+    btn.textContent='Entrando...'; btn.disabled=true;
+
+    var resp = await sb.auth.signInWithPassword({ email: email, password: senha });
+    if(resp.error){
+      err.textContent='E-mail ou senha incorretos.';
+      err.style.display='block';
+      btn.textContent='Entrar'; btn.disabled=false;
+      return;
+    }
+
+    // descobre qual empresa o usuário pertence
+    var lig = await sb.from('company_users').select('company_id, role, tp_companies(name)').limit(1).single();
+    if(lig.error || !lig.data){
+      err.textContent='Usuário sem empresa vinculada.';
+      err.style.display='block';
+      btn.textContent='Entrar'; btn.disabled=false;
+      await sb.auth.signOut();
+      return;
+    }
+
+    // mostra o painel com os dados da empresa
+    var nomeEmpresa = lig.data.tp_companies ? lig.data.tp_companies.name : 'Minha empresa';
+    var iniciais = nomeEmpresa.split(' ').map(function(p){return p[0]}).join('').substring(0,2).toUpperCase();
+    document.querySelector('.company span:last-child').textContent = nomeEmpresa;
+    document.querySelector('.company .badge').textContent = iniciais;
+
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('appWrap').style.display='block';
+    if(!chartsIniciados){ iniciarCharts(); chartsIniciados=true; }
+  }
+
+  async function sair(){
+    await sb.auth.signOut();
+    location.reload();
+  }
+</script>
 <script>
   function go(el,page){
     document.querySelectorAll('.side a').forEach(a=>a.classList.remove('active'));
@@ -318,6 +386,8 @@
   }
 
   var gold='#d4a037', goldLt='#f5d77a', muted='#9a948a', grid='rgba(212,160,55,.1)';
+
+  function iniciarCharts(){
   Chart.defaults.color=muted; Chart.defaults.font.family='Montserrat'; Chart.defaults.font.size=11;
 
   new Chart(document.getElementById('chLine'),{type:'line',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],datasets:[{data:[22,35,28,52,44,61,40],borderColor:gold,backgroundColor:'rgba(212,160,55,.12)',fill:true,tension:.35,pointBackgroundColor:goldLt,pointRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
@@ -331,6 +401,7 @@
   new Chart(document.getElementById('chOrigin'),{type:'doughnut',data:{labels:['WhatsApp','Instagram','Anúncios','Indicação'],datasets:[{data:[58,22,14,6],backgroundColor:[gold,'#e0a558','rgba(212,160,55,.55)','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true}}},cutout:'58%',maintainAspectRatio:false}});
 
   new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  }
 </script>
 </body>
 </html>
