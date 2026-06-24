@@ -246,21 +246,12 @@
       <div class="psub">Histórico completo de cada atendimento</div>
       <div class="conv-layout">
         <div class="conv-list">
-          <div class="conv-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar cliente...</div>
-          <div class="conv-item active" onclick="selConv(this,'Maria Silva','MS','lead quente')"><div class="top"><span class="nm">Maria Silva</span><span class="tm">14:32</span></div><div class="pv">queria remarcar pra quinta</div></div>
-          <div class="conv-item" onclick="selConv(this,'João Pereira','JP','lead morno')"><div class="top"><span class="nm">João Pereira</span><span class="tm">13:10</span></div><div class="pv">qual o valor do pacote?</div></div>
-          <div class="conv-item" onclick="selConv(this,'Ana Costa','AC','lead frio')"><div class="top"><span class="nm">Ana Costa</span><span class="tm">11:48</span></div><div class="pv">vi o anúncio de vocês</div></div>
-          <div class="conv-item" onclick="selConv(this,'Carlos Dias','CD','lead quente')"><div class="top"><span class="nm">Carlos Dias</span><span class="tm">10:22</span></div><div class="pv">quero fechar o day spa</div></div>
+          <div class="conv-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> <input id="conv-busca" placeholder="Buscar cliente..." oninput="filtrarConvs()" style="background:transparent;border:none;color:var(--txt);font-family:'Montserrat';font-size:.85rem;outline:none;width:100%"></div>
+          <div id="conv-lista"></div>
         </div>
         <div class="conv-thread">
-          <div class="conv-head"><div class="av" id="cv-av">MS</div><div><div class="nm" id="cv-nm">Maria Silva</div><div class="meta" id="cv-meta">+55 31 9xxxx-xxxx · lead quente</div></div></div>
-          <div class="msgs">
-            <div class="msg them">Oi! Que bom te ver por aqui 😊 O que você procura hoje?</div>
-            <div class="msg me">Queria remarcar pra quinta</div>
-            <div class="msg them">Claro! Quinta tenho 15h livre. Confirmo pra você?</div>
-            <div class="msg me">Confirma sim, obrigada!</div>
-            <div class="msg them">Prontinho, agendado pra quinta às 15h. Te espero! ✨</div>
-          </div>
+          <div class="conv-head"><div class="av" id="cv-av">—</div><div><div class="nm" id="cv-nm">Selecione uma conversa</div><div class="meta" id="cv-meta">—</div></div></div>
+          <div class="msgs" id="cv-msgs"><p style="color:var(--muted);font-size:.88rem">Clique em um cliente na lista para ver o histórico.</p></div>
         </div>
       </div>
     </div>
@@ -349,6 +340,7 @@
     if(!chartsIniciados){ iniciarCharts(); chartsIniciados=true; }
     carregarLeads();
     carregarDashboard();
+    carregarConversas();
   }
 
   // ===== DADOS REAIS: LEADS =====
@@ -402,12 +394,55 @@
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(first).classList.add('active');
   }
-  function selConv(el,nm,av,meta){
-    document.querySelectorAll('.conv-item').forEach(c=>c.classList.remove('active'));
+  // ===== DADOS REAIS: CONVERSAS =====
+  var TODOS_LEADS = [];
+  function iniciais(nome){ return nome.split(' ').map(function(p){return p[0]}).join('').substring(0,2).toUpperCase(); }
+  function escapeHtml(t){ var d=document.createElement('div'); d.textContent=t||''; return d.innerHTML; }
+
+  async function carregarConversas(){
+    var r = await sb.from('tp_leads').select('id, name, phone, stage').eq('company_id', window.MINHA_EMPRESA).order('created_at',{ascending:false});
+    TODOS_LEADS = (r.data)||[];
+    renderListaConvs(TODOS_LEADS);
+  }
+  function renderListaConvs(leads){
+    var lista = document.getElementById('conv-lista');
+    lista.innerHTML='';
+    if(!leads.length){ lista.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:10px">Nenhum cliente ainda.</p>'; return; }
+    leads.forEach(function(l){
+      var nome = (l.name && l.name.trim()) ? l.name : ('Contato '+(l.phone||'').slice(-4));
+      var item = document.createElement('div');
+      item.className='conv-item';
+      item.onclick = function(){ abrirConversa(item, l); };
+      item.innerHTML = '<div class="top"><span class="nm">'+escapeHtml(nome)+'</span></div><div class="pv">'+escapeHtml(l.phone||'')+'</div>';
+      lista.appendChild(item);
+    });
+  }
+  function filtrarConvs(){
+    var q = document.getElementById('conv-busca').value.toLowerCase();
+    renderListaConvs(TODOS_LEADS.filter(function(l){
+      return ((l.name||'')+' '+(l.phone||'')).toLowerCase().indexOf(q)>=0;
+    }));
+  }
+  async function abrirConversa(el, lead){
+    document.querySelectorAll('.conv-item').forEach(function(c){c.classList.remove('active');});
     el.classList.add('active');
-    document.getElementById('cv-nm').textContent=nm;
-    document.getElementById('cv-av').textContent=av;
-    document.getElementById('cv-meta').textContent='+55 31 9xxxx-xxxx · '+meta;
+    var nome = (lead.name && lead.name.trim()) ? lead.name : ('Contato '+(lead.phone||'').slice(-4));
+    document.getElementById('cv-nm').textContent = nome;
+    document.getElementById('cv-av').textContent = iniciais(nome);
+    document.getElementById('cv-meta').textContent = (lead.phone||'') + ' · lead ' + (lead.stage||'frio');
+    var box = document.getElementById('cv-msgs');
+    box.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Carregando...</p>';
+    var r = await sb.from('tp_lead_interactions').select('summary, created_by, created_at').eq('lead_id', lead.id).order('created_at',{ascending:true});
+    var msgs = (r.data)||[];
+    if(!msgs.length){ box.innerHTML='<p style="color:var(--muted);font-size:.85rem">Sem mensagens registradas para este cliente.</p>'; return; }
+    box.innerHTML='';
+    msgs.forEach(function(m){
+      var doCliente = (m.created_by==='client');
+      var div = document.createElement('div');
+      div.className = 'msg ' + (doCliente ? 'them' : 'me');
+      div.textContent = m.summary || '';
+      box.appendChild(div);
+    });
   }
 
   var gold='#d4a037', goldLt='#f5d77a', muted='#9a948a', grid='rgba(212,160,55,.1)';
