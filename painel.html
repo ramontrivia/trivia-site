@@ -228,18 +228,15 @@
     </div>
 
     <div id="pedidos" class="page">
-      <div class="ph">Pedidos e orçamentos</div>
-      <div class="psub">Propostas e pedidos gerados no atendimento</div>
+      <div class="ph">Orçamentos</div>
+      <div class="psub">Orçamentos gerados para seus clientes</div>
       <div class="kpis">
-        <div class="kpi"><div class="k">Orçamentos abertos</div><div class="v">6</div></div>
-        <div class="kpi"><div class="k">Pedidos do mês</div><div class="v up">23</div></div>
-        <div class="kpi"><div class="k">Ticket médio</div><div class="v">R$ 180</div></div>
+        <div class="kpi"><div class="k">Aguardando</div><div class="v" id="orc-aguard">—</div></div>
+        <div class="kpi"><div class="k">Aprovados</div><div class="v up" id="orc-aprov">—</div></div>
+        <div class="kpi"><div class="k">Ticket médio</div><div class="v" id="orc-ticket">—</div></div>
       </div>
-      <div class="card">
-        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Maria Silva — Pacote noiva</div><div class="sub">orçamento · R$ 450</div></div><span class="pill wait">aguardando</span></div>
-        <div class="row"><div><div style="font-weight:600;font-size:.92rem">João Pereira — Corte + barba</div><div class="sub">pedido · R$ 80</div></div><span class="pill ok">confirmado</span></div>
-        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Lúcia Reis — Coloração</div><div class="sub">orçamento · R$ 220</div></div><span class="pill m">em análise</span></div>
-        <div class="row"><div><div style="font-weight:600;font-size:.92rem">Carlos Dias — Day spa</div><div class="sub">pedido · R$ 320</div></div><span class="pill ok">confirmado</span></div>
+      <div class="card" id="orc-lista">
+        <p style="color:var(--muted);font-size:.88rem">Carregando orçamentos...</p>
       </div>
     </div>
 
@@ -352,6 +349,7 @@
     carregarConversas();
     carregarAgenda();
     carregarRelatorios();
+    carregarOrcamentos();
   }
 
   // ===== DADOS REAIS: LEADS =====
@@ -455,6 +453,44 @@
     var dows=[0,0,0,0,0,0,0];
     inter.forEach(function(m){ dows[new Date(m.created_at).getDay()]++; });
     if(chWeek){ chWeek.data.datasets[0].data=dows; chWeek.update(); }
+  }
+
+  // ===== DADOS REAIS: ORÇAMENTOS =====
+  function statusOrc(s){
+    s=(s||'').toLowerCase();
+    if(s.indexOf('aprov')>=0) return '<span class="pill ok">aprovado</span>';
+    if(s.indexOf('recus')>=0) return '<span class="pill f">recusado</span>';
+    return '<span class="pill wait">aguardando</span>';
+  }
+  function moeda(v){ return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  async function carregarOrcamentos(){
+    var box=document.getElementById('orc-lista');
+    var r=await sb.from('tp_orcamentos').select('customer_name, customer_phone, service, order_date, value, status, notes').eq('company_id', window.MINHA_EMPRESA).order('created_at',{ascending:false});
+    if(r.error){ box.innerHTML='<p style="color:var(--muted);font-size:.88rem">Não foi possível carregar os orçamentos.</p>'; console.error(r.error); return; }
+    var orcs=(r.data)||[];
+
+    var aguard=0, aprov=0, somaAprov=0;
+    orcs.forEach(function(o){
+      var st=(o.status||'').toLowerCase();
+      if(st.indexOf('aprov')>=0){ aprov++; somaAprov+=Number(o.value||0); }
+      else if(st.indexOf('recus')<0){ aguard++; }
+    });
+    document.getElementById('orc-aguard').textContent=aguard;
+    document.getElementById('orc-aprov').textContent=aprov;
+    document.getElementById('orc-ticket').textContent = aprov>0 ? moeda(somaAprov/aprov) : 'R$ 0,00';
+
+    if(!orcs.length){ box.innerHTML='<p style="color:var(--muted);font-size:.88rem">Nenhum orçamento registrado ainda.</p>'; return; }
+    box.innerHTML='';
+    orcs.forEach(function(o){
+      var cliente=o.customer_name ? limparNome(o.customer_name) : ('Contato '+(o.customer_phone||'').slice(-4));
+      var data='';
+      if(o.order_date){ var d=new Date(o.order_date+'T00:00:00'); data=' · '+('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
+      var serv=o.service||'Serviço';
+      var row=document.createElement('div');
+      row.className='row';
+      row.innerHTML='<div><div style="font-weight:600;font-size:.92rem">'+escapeHtml(cliente)+' — '+escapeHtml(serv)+'</div><div class="sub">'+moeda(o.value)+data+'</div></div>'+statusOrc(o.status);
+      box.appendChild(row);
+    });
   }
 
   // ===== DADOS REAIS: AGENDA =====
