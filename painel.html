@@ -210,22 +210,16 @@
       <div class="psub">Seus contatos organizados por temperatura</div>
       <div class="kanban">
         <div class="kcol">
-          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#d4a037"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span style="font-weight:600;font-size:.92rem">Quentes</span><span class="ct" style="background:rgba(212,160,55,.18);color:#f5d77a">8</span></div>
-          <div class="kcard"><div class="n">Maria Silva</div><div class="s">pronta pra fechar</div></div>
-          <div class="kcard"><div class="n">Carlos Dias</div><div class="s">pediu orçamento</div></div>
-          <div class="kcard"><div class="n">Renata Lopes</div><div class="s">quer agendar hoje</div></div>
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#d4a037"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span style="font-weight:600;font-size:.92rem">Quentes</span><span class="ct" id="ct-quente" style="background:rgba(212,160,55,.18);color:#f5d77a">0</span></div>
+          <div id="col-quente"></div>
         </div>
         <div class="kcol">
-          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#e0a558"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg><span style="font-weight:600;font-size:.92rem">Mornos</span><span class="ct" style="background:rgba(224,165,88,.15);color:#e0a558">15</span></div>
-          <div class="kcard"><div class="n">João Pereira</div><div class="s">em negociação</div></div>
-          <div class="kcard"><div class="n">Lúcia Reis</div><div class="s">comparando preço</div></div>
-          <div class="kcard"><div class="n">Marcos Viní</div><div class="s">pediu mais info</div></div>
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#e0a558"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg><span style="font-weight:600;font-size:.92rem">Mornos</span><span class="ct" id="ct-morno" style="background:rgba(224,165,88,.15);color:#e0a558">0</span></div>
+          <div id="col-morno"></div>
         </div>
         <div class="kcol">
-          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#9a948a"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg><span style="font-weight:600;font-size:.92rem">Frios</span><span class="ct" style="background:rgba(154,148,138,.15);color:#9a948a">34</span></div>
-          <div class="kcard"><div class="n">Ana Costa</div><div class="s">sumiu há 7 dias</div></div>
-          <div class="kcard"><div class="n">Pedro Alves</div><div class="s">para reativar</div></div>
-          <div class="kcard"><div class="n">Sandra M.</div><div class="s">não respondeu</div></div>
+          <div class="kh"><svg class="ic" viewBox="0 0 24 24" stroke="#9a948a"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg><span style="font-weight:600;font-size:.92rem">Frios</span><span class="ct" id="ct-frio" style="background:rgba(154,148,138,.15);color:#9a948a">0</span></div>
+          <div id="col-frio"></div>
         </div>
       </div>
       <div class="info-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4a037" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg> A Mel move os leads entre as colunas automaticamente e avisa quando alguém esquenta.</div>
@@ -312,7 +306,7 @@
 <script>
   // ===== CONFIGURAÇÃO SUPABASE =====
   var SUPABASE_URL = 'https://rcunwbumjyvdyiswuumw.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_vfZG5oGoYYtsU0B2oKPuZQ_MNmNKOM3';
+  var SUPABASE_KEY = 'COLE_AQUI_SUA_PUBLISHABLE_KEY';  // <-- cole sua chave sb_publishable_...
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   var chartsIniciados = false;
 
@@ -348,9 +342,39 @@
     document.querySelector('.company span:last-child').textContent = nomeEmpresa;
     document.querySelector('.company .badge').textContent = iniciais;
 
+    window.MINHA_EMPRESA = lig.data.company_id;
+
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('appWrap').style.display='block';
     if(!chartsIniciados){ iniciarCharts(); chartsIniciados=true; }
+    carregarLeads();
+  }
+
+  // ===== DADOS REAIS: LEADS =====
+  function rotuloFase(stage){
+    if(stage==='quente') return 'lead quente';
+    if(stage==='morno') return 'em negociação';
+    return 'para reativar';
+  }
+  async function carregarLeads(){
+    var r = await sb.from('tp_leads').select('name, phone, stage').eq('company_id', window.MINHA_EMPRESA);
+    if(r.error){ console.error(r.error); return; }
+    var leads = r.data || [];
+    var cols = { quente:document.getElementById('col-quente'), morno:document.getElementById('col-morno'), frio:document.getElementById('col-frio') };
+    var cnt = { quente:0, morno:0, frio:0 };
+    cols.quente.innerHTML=''; cols.morno.innerHTML=''; cols.frio.innerHTML='';
+    leads.forEach(function(l){
+      var fase = (l.stage==='quente'||l.stage==='morno') ? l.stage : 'frio';
+      cnt[fase]++;
+      var nome = (l.name && l.name.trim()) ? l.name : ('Contato ' + (l.phone||'').slice(-4));
+      var card = document.createElement('div');
+      card.className='kcard';
+      card.innerHTML = '<div class="n">'+nome+'</div><div class="s">'+rotuloFase(fase)+'</div>';
+      cols[fase].appendChild(card);
+    });
+    document.getElementById('ct-quente').textContent = cnt.quente;
+    document.getElementById('ct-morno').textContent = cnt.morno;
+    document.getElementById('ct-frio').textContent = cnt.frio;
   }
 
   async function sair(){
