@@ -20,7 +20,7 @@
   .tri{width:30px;height:30px;flex-shrink:0}
   .tri svg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(212,160,55,.6))}
   .logo-txt{font-weight:800;font-size:1.3rem;letter-spacing:.5px}
-  .logo-txt .a{color:#fff}.logo-txt .b{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo-txt .a{color:#fff}.logo-txt .b{color:#d4a037;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
   .topnav{background:var(--panel);border-bottom:1px solid var(--line);height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40}
   .topnav .right{display:flex;align-items:center;gap:16px}
   .company{display:flex;align-items:center;gap:10px;font-size:.9rem}
@@ -136,7 +136,10 @@
 <div id="appWrap" style="display:none">
 
 <div class="topnav">
-  <a href="index.html" class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></a>
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="index.html" class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></a>
+    <img id="logo-empresa" src="" alt="" style="display:none;height:38px;width:auto;border-radius:8px;border-left:1px solid var(--line);padding-left:14px">
+  </div>
   <div class="right">
     <div class="role-switch">
       <button id="rb-dono" class="active" onclick="setRole('dono')">Dono</button>
@@ -313,7 +316,7 @@
     }
 
     // descobre qual empresa o usuário pertence
-    var lig = await sb.from('company_users').select('company_id, role, tp_companies(name, assistant_name)').limit(1).single();
+    var lig = await sb.from('company_users').select('company_id, role, tp_companies(name, assistant_name, logo_url)').limit(1).single();
     if(lig.error || !lig.data){
       err.textContent='Usuário sem empresa vinculada.';
       err.style.display='block';
@@ -333,6 +336,10 @@
     if(notaEl){ notaEl.textContent = nomeAssistente + ' move os leads entre as colunas automaticamente e avisa quando alguém esquenta.'; }
     var c1 = document.getElementById('cfg-assist1'); if(c1) c1.textContent = nomeAssistente;
     var c2 = document.getElementById('cfg-assist2'); if(c2) c2.textContent = nomeAssistente;
+
+    var logoUrl = (lig.data.tp_companies && lig.data.tp_companies.logo_url) ? lig.data.tp_companies.logo_url : '';
+    var logoEl = document.getElementById('logo-empresa');
+    if(logoEl && logoUrl){ logoEl.src = logoUrl; logoEl.alt = nomeEmpresa; logoEl.style.display = 'block'; }
 
     window.MINHA_EMPRESA = lig.data.company_id;
 
