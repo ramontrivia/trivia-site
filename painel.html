@@ -179,12 +179,10 @@
       </div>
       <div class="grid2">
         <div class="card"><h4>Leads por temperatura</h4><div class="chart-wrap"><canvas id="chDonut"></canvas></div></div>
-        <div class="card"><h4>Funil de conversão</h4>
-          <div class="funnel-row"><span class="lbl">Atrai</span><div class="bar" style="width:100%"></div><span class="val">120</span></div>
-          <div class="funnel-row"><span class="lbl">Entende</span><div class="bar" style="width:73%"></div><span class="val">88</span></div>
-          <div class="funnel-row"><span class="lbl">Aquece</span><div class="bar" style="width:51%"></div><span class="val">61</span></div>
-          <div class="funnel-row"><span class="lbl">Direciona</span><div class="bar" style="width:33%"></div><span class="val">40</span></div>
-          <div class="funnel-row"><span class="lbl">Converte</span><div class="bar" style="width:22%"></div><span class="val">26</span></div>
+        <div class="card"><h4>Funil de leads</h4>
+          <div class="funnel-row"><span class="lbl">Chegaram</span><div class="bar" id="fb-total" style="width:100%"></div><span class="val" id="fv-total">0</span></div>
+          <div class="funnel-row"><span class="lbl">Engajaram</span><div class="bar" id="fb-engaj" style="width:0%"></div><span class="val" id="fv-engaj">0</span></div>
+          <div class="funnel-row"><span class="lbl">Quentes</span><div class="bar" id="fb-quente" style="width:0%"></div><span class="val" id="fv-quente">0</span></div>
         </div>
       </div>
     </div>
@@ -477,6 +475,17 @@
     document.getElementById('kpi-quentes').textContent = quentes;
     document.getElementById('kpi-leads').textContent = leads.length;
     if(chDonut){ chDonut.data.datasets[0].data=[quentes,mornos,frios]; chDonut.update(); }
+
+    // funil real de leads
+    var total = leads.length;
+    var engaj = quentes + mornos;
+    function pct(n){ return total>0 ? Math.round(n/total*100) : 0; }
+    document.getElementById('fv-total').textContent = total;
+    document.getElementById('fv-engaj').textContent = engaj;
+    document.getElementById('fv-quente').textContent = quentes;
+    document.getElementById('fb-total').style.width = '100%';
+    document.getElementById('fb-engaj').style.width = pct(engaj)+'%';
+    document.getElementById('fb-quente').style.width = pct(quentes)+'%';
 
     // busca interações dos últimos 15 dias
     var desde = new Date(); desde.setDate(desde.getDate()-14); desde.setHours(0,0,0,0);
