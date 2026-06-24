@@ -168,13 +168,13 @@
       <div class="ph">Dashboard</div>
       <div class="psub">Visão geral do seu atendimento hoje</div>
       <div class="kpis">
-        <div class="kpi"><div class="k">Conversas hoje</div><div class="v up">47</div></div>
-        <div class="kpi"><div class="k">Leads quentes</div><div class="v">8</div></div>
-        <div class="kpi"><div class="k">Agendamentos</div><div class="v">12</div></div>
-        <div class="kpi"><div class="k">Taxa de resposta</div><div class="v up">98%</div></div>
+        <div class="kpi"><div class="k">Conversas hoje</div><div class="v up" id="kpi-hoje">—</div></div>
+        <div class="kpi"><div class="k">Leads quentes</div><div class="v" id="kpi-quentes">—</div></div>
+        <div class="kpi"><div class="k">Total de leads</div><div class="v" id="kpi-leads">—</div></div>
+        <div class="kpi"><div class="k">Mensagens (15d)</div><div class="v up" id="kpi-msgs">—</div></div>
       </div>
       <div class="grid2">
-        <div class="card"><h4>Conversas nos últimos 7 dias</h4><div class="chart-wrap"><canvas id="chLine"></canvas></div></div>
+        <div class="card"><h4>Conversas nos últimos 15 dias</h4><div class="chart-wrap"><canvas id="chLine"></canvas></div></div>
         <div class="card"><h4>Horários de pico</h4><div class="chart-wrap"><canvas id="chBar"></canvas></div></div>
       </div>
       <div class="grid2">
@@ -348,6 +348,7 @@
     document.getElementById('appWrap').style.display='block';
     if(!chartsIniciados){ iniciarCharts(); chartsIniciados=true; }
     carregarLeads();
+    carregarDashboard();
   }
 
   // ===== DADOS REAIS: LEADS =====
@@ -411,20 +412,72 @@
 
   var gold='#d4a037', goldLt='#f5d77a', muted='#9a948a', grid='rgba(212,160,55,.1)';
 
+  var chLine, chBar, chDonut, chOrigin, chRep, chWeek;
   function iniciarCharts(){
   Chart.defaults.color=muted; Chart.defaults.font.family='Montserrat'; Chart.defaults.font.size=11;
 
-  new Chart(document.getElementById('chLine'),{type:'line',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],datasets:[{data:[22,35,28,52,44,61,40],borderColor:gold,backgroundColor:'rgba(212,160,55,.12)',fill:true,tension:.35,pointBackgroundColor:goldLt,pointRadius:3}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chLine = new Chart(document.getElementById('chLine'),{type:'line',data:{labels:[],datasets:[{data:[],borderColor:gold,backgroundColor:'rgba(212,160,55,.12)',fill:true,tension:.35,pointBackgroundColor:goldLt,pointRadius:2}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
 
-  new Chart(document.getElementById('chBar'),{type:'bar',data:{labels:['8h','10h','12h','14h','16h','18h','20h'],datasets:[{data:[12,28,45,33,52,38,18],backgroundColor:function(c){return c.dataIndex===4?gold:'rgba(212,160,55,.45)'},borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chBar = new Chart(document.getElementById('chBar'),{type:'bar',data:{labels:[],datasets:[{data:[],backgroundColor:'rgba(212,160,55,.55)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
 
-  new Chart(document.getElementById('chDonut'),{type:'doughnut',data:{labels:['Quentes','Mornos','Frios'],datasets:[{data:[8,15,34],backgroundColor:[gold,'#e0a558','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},cutout:'62%',maintainAspectRatio:false}});
+  chDonut = new Chart(document.getElementById('chDonut'),{type:'doughnut',data:{labels:['Quentes','Mornos','Frios'],datasets:[{data:[0,0,0],backgroundColor:[gold,'#e0a558','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},cutout:'62%',maintainAspectRatio:false}});
 
-  new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Conversas',data:[820,910,1050,980,1180,1284],backgroundColor:'rgba(212,160,55,.35)',borderRadius:5},{label:'Conversões',data:[140,165,210,190,240,270],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chRep = new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Conversas',data:[820,910,1050,980,1180,1284],backgroundColor:'rgba(212,160,55,.35)',borderRadius:5},{label:'Conversões',data:[140,165,210,190,240,270],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
 
-  new Chart(document.getElementById('chOrigin'),{type:'doughnut',data:{labels:['WhatsApp','Instagram','Anúncios','Indicação'],datasets:[{data:[58,22,14,6],backgroundColor:[gold,'#e0a558','rgba(212,160,55,.55)','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true}}},cutout:'58%',maintainAspectRatio:false}});
+  chOrigin = new Chart(document.getElementById('chOrigin'),{type:'doughnut',data:{labels:['WhatsApp','Instagram'],datasets:[{data:[0,0],backgroundColor:[gold,'#e0a558'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true}}},cutout:'58%',maintainAspectRatio:false}});
 
-  new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chWeek = new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  }
+
+  // ===== DADOS REAIS: DASHBOARD =====
+  async function carregarDashboard(){
+    // busca leads da empresa (para quentes/total e rosca de temperatura)
+    var rl = await sb.from('tp_leads').select('id, stage').eq('company_id', window.MINHA_EMPRESA);
+    var leads = (rl.data)||[];
+    var quentes=0, mornos=0, frios=0;
+    leads.forEach(function(l){
+      if(l.stage==='quente') quentes++;
+      else if(l.stage==='morno') mornos++;
+      else frios++;
+    });
+    document.getElementById('kpi-quentes').textContent = quentes;
+    document.getElementById('kpi-leads').textContent = leads.length;
+    if(chDonut){ chDonut.data.datasets[0].data=[quentes,mornos,frios]; chDonut.update(); }
+
+    // busca interações dos últimos 15 dias
+    var desde = new Date(); desde.setDate(desde.getDate()-14); desde.setHours(0,0,0,0);
+    var ri = await sb.from('tp_lead_interactions').select('type, created_at').gte('created_at', desde.toISOString());
+    var inter = (ri.data)||[];
+    document.getElementById('kpi-msgs').textContent = inter.length;
+
+    // conversas hoje (mensagens recebidas do cliente hoje)
+    var hoje = new Date(); hoje.setHours(0,0,0,0);
+    var qtdHoje = inter.filter(function(m){ return new Date(m.created_at) >= hoje; }).length;
+    document.getElementById('kpi-hoje').textContent = qtdHoje;
+
+    // gráfico últimos 15 dias
+    var dias=[], labels=[], mapa={};
+    for(var i=14;i>=0;i--){
+      var d=new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0);
+      var chave=d.toISOString().slice(0,10);
+      mapa[chave]=0;
+      dias.push(chave);
+      labels.push(('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2));
+    }
+    inter.forEach(function(m){ var c=new Date(m.created_at).toISOString().slice(0,10); if(mapa[c]!==undefined) mapa[c]++; });
+    if(chLine){ chLine.data.labels=labels; chLine.data.datasets[0].data=dias.map(function(d){return mapa[d];}); chLine.update(); }
+
+    // horários de pico (por hora do dia)
+    var horas=new Array(24).fill(0);
+    inter.forEach(function(m){ horas[new Date(m.created_at).getHours()]++; });
+    var faixas=['6h','8h','10h','12h','14h','16h','18h','20h','22h'];
+    var faixaH=[6,8,10,12,14,16,18,20,22].map(function(h){ return horas[h]+horas[h+1]; });
+    if(chBar){ chBar.data.labels=faixas; chBar.data.datasets[0].data=faixaH; chBar.update(); }
+
+    // origem dos contatos (WhatsApp vs Instagram)
+    var wpp=0, insta=0;
+    inter.forEach(function(m){ if((m.type||'').indexOf('whatsapp')===0) wpp++; else if((m.type||'').indexOf('instagram')===0) insta++; });
+    if(chOrigin){ chOrigin.data.datasets[0].data=[wpp,insta]; chOrigin.update(); }
   }
 </script>
 </body>
