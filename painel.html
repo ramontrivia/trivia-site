@@ -200,7 +200,7 @@
       </div>
       <div class="card"><h4>Conversas e conversões por mês</h4><div class="chart-wrap" style="height:240px"><canvas id="chRep"></canvas></div></div>
       <div class="grid2">
-        <div class="card"><h4>Origem dos contatos</h4><div class="chart-wrap"><canvas id="chOrigin"></canvas></div></div>
+        <div class="card"><h4>Atividade por canal</h4><div class="chart-wrap" style="display:flex;align-items:center;justify-content:center"><p style="color:var(--muted);font-size:.85rem;text-align:center;padding:0 20px">Em breve: distinção entre WhatsApp e Instagram.</p></div></div>
         <div class="card"><h4>Dias mais movimentados</h4><div class="chart-wrap"><canvas id="chWeek"></canvas></div></div>
       </div>
     </div>
@@ -432,15 +432,14 @@
     document.getElementById('cv-meta').textContent = (lead.phone||'') + ' · lead ' + (lead.stage||'frio');
     var box = document.getElementById('cv-msgs');
     box.innerHTML = '<p style="color:var(--muted);font-size:.85rem">Carregando...</p>';
-    var r = await sb.from('tp_lead_interactions').select('summary, created_by, created_at').eq('lead_id', lead.id).order('created_at',{ascending:true});
+    var r = await sb.from('tp_lead_interactions').select('message, created_at').eq('lead_id', lead.id).order('created_at',{ascending:true});
     var msgs = (r.data)||[];
     if(!msgs.length){ box.innerHTML='<p style="color:var(--muted);font-size:.85rem">Sem mensagens registradas para este cliente.</p>'; return; }
     box.innerHTML='';
     msgs.forEach(function(m){
-      var doCliente = (m.created_by==='client');
       var div = document.createElement('div');
-      div.className = 'msg ' + (doCliente ? 'them' : 'me');
-      div.textContent = m.summary || '';
+      div.className = 'msg them';
+      div.textContent = m.message || '';
       box.appendChild(div);
     });
   }
@@ -459,7 +458,7 @@
 
   chRep = new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Conversas',data:[820,910,1050,980,1180,1284],backgroundColor:'rgba(212,160,55,.35)',borderRadius:5},{label:'Conversões',data:[140,165,210,190,240,270],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
 
-  chOrigin = new Chart(document.getElementById('chOrigin'),{type:'doughnut',data:{labels:['WhatsApp','Instagram'],datasets:[{data:[0,0],backgroundColor:[gold,'#e0a558'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true}}},cutout:'58%',maintainAspectRatio:false}});
+  chOrigin = null;
 
   chWeek = new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
   }
@@ -481,11 +480,11 @@
 
     // busca interações dos últimos 15 dias
     var desde = new Date(); desde.setDate(desde.getDate()-14); desde.setHours(0,0,0,0);
-    var ri = await sb.from('tp_lead_interactions').select('type, created_at').gte('created_at', desde.toISOString());
+    var ri = await sb.from('tp_lead_interactions').select('created_at').gte('created_at', desde.toISOString());
     var inter = (ri.data)||[];
     document.getElementById('kpi-msgs').textContent = inter.length;
 
-    // conversas hoje (mensagens recebidas do cliente hoje)
+    // conversas hoje
     var hoje = new Date(); hoje.setHours(0,0,0,0);
     var qtdHoje = inter.filter(function(m){ return new Date(m.created_at) >= hoje; }).length;
     document.getElementById('kpi-hoje').textContent = qtdHoje;
@@ -508,11 +507,6 @@
     var faixas=['6h','8h','10h','12h','14h','16h','18h','20h','22h'];
     var faixaH=[6,8,10,12,14,16,18,20,22].map(function(h){ return horas[h]+horas[h+1]; });
     if(chBar){ chBar.data.labels=faixas; chBar.data.datasets[0].data=faixaH; chBar.update(); }
-
-    // origem dos contatos (WhatsApp vs Instagram)
-    var wpp=0, insta=0;
-    inter.forEach(function(m){ if((m.type||'').indexOf('whatsapp')===0) wpp++; else if((m.type||'').indexOf('instagram')===0) insta++; });
-    if(chOrigin){ chOrigin.data.datasets[0].data=[wpp,insta]; chOrigin.update(); }
   }
 </script>
 </body>
