@@ -191,12 +191,12 @@
       <div class="ph">Relatórios e métricas</div>
       <div class="psub">Análise detalhada do seu atendimento</div>
       <div class="kpis">
-        <div class="kpi"><div class="k">Conversas no mês</div><div class="v up">1.284</div></div>
-        <div class="kpi"><div class="k">Taxa de conversão</div><div class="v">21%</div></div>
-        <div class="kpi"><div class="k">Tempo médio resposta</div><div class="v">4s</div></div>
-        <div class="kpi"><div class="k">Reativações</div><div class="v">38</div></div>
+        <div class="kpi"><div class="k">Total de mensagens</div><div class="v up" id="rel-msgs">—</div></div>
+        <div class="kpi"><div class="k">Total de leads</div><div class="v" id="rel-leads">—</div></div>
+        <div class="kpi"><div class="k">Leads quentes</div><div class="v" id="rel-quentes">—</div></div>
+        <div class="kpi"><div class="k">% quentes</div><div class="v" id="rel-taxa">—</div></div>
       </div>
-      <div class="card"><h4>Conversas e conversões por mês</h4><div class="chart-wrap" style="height:240px"><canvas id="chRep"></canvas></div></div>
+      <div class="card"><h4>Mensagens por mês</h4><div class="chart-wrap" style="height:240px"><canvas id="chRep"></canvas></div></div>
       <div class="grid2">
         <div class="card"><h4>Atividade por canal</h4><div class="chart-wrap" style="display:flex;align-items:center;justify-content:center"><p style="color:var(--muted);font-size:.85rem;text-align:center;padding:0 20px">Em breve: distinção entre WhatsApp e Instagram.</p></div></div>
         <div class="card"><h4>Dias mais movimentados</h4><div class="chart-wrap"><canvas id="chWeek"></canvas></div></div>
@@ -337,6 +337,7 @@
     carregarDashboard();
     carregarConversas();
     carregarAgenda();
+    carregarRelatorios();
   }
 
   // ===== DADOS REAIS: LEADS =====
@@ -394,6 +395,39 @@
   var TODOS_LEADS = [];
   function iniciais(nome){ return nome.split(' ').map(function(p){return p[0]}).join('').substring(0,2).toUpperCase(); }
   function escapeHtml(t){ var d=document.createElement('div'); d.textContent=t||''; return d.innerHTML; }
+
+  // ===== DADOS REAIS: RELATÓRIOS =====
+  async function carregarRelatorios(){
+    // leads
+    var rl = await sb.from('tp_leads').select('stage').eq('company_id', window.MINHA_EMPRESA);
+    var leads=(rl.data)||[];
+    var quentes=leads.filter(function(l){return l.stage==='quente';}).length;
+    document.getElementById('rel-leads').textContent = leads.length;
+    document.getElementById('rel-quentes').textContent = quentes;
+    document.getElementById('rel-taxa').textContent = (leads.length>0 ? Math.round(quentes/leads.length*100) : 0)+'%';
+
+    // todas as mensagens
+    var ri = await sb.from('tp_lead_interactions').select('created_at');
+    var inter=(ri.data)||[];
+    document.getElementById('rel-msgs').textContent = inter.length.toLocaleString('pt-BR');
+
+    // mensagens por mês (últimos 6 meses)
+    var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var labels=[], chaves=[], mapaM={};
+    var base=new Date(); base.setDate(1);
+    for(var i=5;i>=0;i--){
+      var d=new Date(base.getFullYear(), base.getMonth()-i, 1);
+      var ch=d.getFullYear()+'-'+d.getMonth();
+      mapaM[ch]=0; chaves.push(ch); labels.push(meses[d.getMonth()]);
+    }
+    inter.forEach(function(m){ var d=new Date(m.created_at); var ch=d.getFullYear()+'-'+d.getMonth(); if(mapaM[ch]!==undefined) mapaM[ch]++; });
+    if(chRep){ chRep.data.labels=labels; chRep.data.datasets[0].data=chaves.map(function(c){return mapaM[c];}); chRep.update(); }
+
+    // dias da semana
+    var dows=[0,0,0,0,0,0,0];
+    inter.forEach(function(m){ dows[new Date(m.created_at).getDay()]++; });
+    if(chWeek){ chWeek.data.datasets[0].data=dows; chWeek.update(); }
+  }
 
   // ===== DADOS REAIS: AGENDA =====
   function statusPill(s){
@@ -503,11 +537,11 @@
 
   chDonut = new Chart(document.getElementById('chDonut'),{type:'doughnut',data:{labels:['Quentes','Mornos','Frios'],datasets:[{data:[0,0,0],backgroundColor:[gold,'#e0a558','rgba(154,148,138,.5)'],borderColor:'#11100b',borderWidth:3}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},cutout:'62%',maintainAspectRatio:false}});
 
-  chRep = new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:['Jan','Fev','Mar','Abr','Mai','Jun'],datasets:[{label:'Conversas',data:[820,910,1050,980,1180,1284],backgroundColor:'rgba(212,160,55,.35)',borderRadius:5},{label:'Conversões',data:[140,165,210,190,240,270],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{position:'bottom',labels:{padding:14,usePointStyle:true}}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chRep = new Chart(document.getElementById('chRep'),{type:'bar',data:{labels:[],datasets:[{label:'Mensagens',data:[],backgroundColor:gold,borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
 
   chOrigin = null;
 
-  chWeek = new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[180,220,195,260,310,280],backgroundColor:'rgba(212,160,55,.45)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
+  chWeek = new Chart(document.getElementById('chWeek'),{type:'bar',data:{labels:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],datasets:[{data:[0,0,0,0,0,0,0],backgroundColor:'rgba(212,160,55,.55)',borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},beginAtZero:true},x:{grid:{display:false}}},maintainAspectRatio:false}});
   }
 
   // ===== DADOS REAIS: DASHBOARD =====
