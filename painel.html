@@ -220,7 +220,7 @@
           <div id="col-frio"></div>
         </div>
       </div>
-      <div class="info-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4a037" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg> A Mel move os leads entre as colunas automaticamente e avisa quando alguém esquenta.</div>
+      <div class="info-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4a037" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg> <span id="nota-assistente">A assistente move os leads entre as colunas automaticamente e avisa quando alguém esquenta.</span></div>
     </div>
 
     <div id="pedidos" class="page">
@@ -269,10 +269,10 @@
 
     <div id="config" class="page">
       <div class="ph">Configurações avançadas</div>
-      <div class="psub">Ajuste o comportamento da Mel e a operação do negócio</div>
+      <div class="psub">Ajuste o comportamento da <span id="cfg-assist1">assistente</span> e a operação do negócio</div>
       <div class="cfg-grid">
-        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Personalidade da Mel</span></div><p>Tom de voz, jeito de falar e regras de atendimento do seu negócio.</p></div>
-        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Horário de funcionamento</span></div><p>Dias e horas em que a Mel atende e como responde fora do horário.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Personalidade da <span id="cfg-assist2">assistente</span></span></div><p>Tom de voz, jeito de falar e regras de atendimento do seu negócio.</p></div>
+        <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Horário de funcionamento</span></div><p>Dias e horas em que sua assistente atende e como responde fora do horário.</p></div>
         <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg><span>Base de conhecimento</span></div><p>Serviços, preços, dúvidas frequentes e informações do negócio.</p></div>
         <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg><span>Reativação e disparos</span></div><p>Mensagens automáticas pra quem sumiu e campanhas no timing certo.</p></div>
         <div class="cfg-card"><div class="ch"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Equipe e permissões</span></div><p>Quem acessa o quê — dono, recepção e profissionais.</p></div>
@@ -313,7 +313,7 @@
     }
 
     // descobre qual empresa o usuário pertence
-    var lig = await sb.from('company_users').select('company_id, role, tp_companies(name)').limit(1).single();
+    var lig = await sb.from('company_users').select('company_id, role, tp_companies(name, assistant_name)').limit(1).single();
     if(lig.error || !lig.data){
       err.textContent='Usuário sem empresa vinculada.';
       err.style.display='block';
@@ -327,6 +327,12 @@
     var iniciais = nomeEmpresa.split(' ').map(function(p){return p[0]}).join('').substring(0,2).toUpperCase();
     document.querySelector('.company span:last-child').textContent = nomeEmpresa;
     document.querySelector('.company .badge').textContent = iniciais;
+
+    var nomeAssistente = (lig.data.tp_companies && lig.data.tp_companies.assistant_name) ? lig.data.tp_companies.assistant_name : 'A assistente';
+    var notaEl = document.getElementById('nota-assistente');
+    if(notaEl){ notaEl.textContent = nomeAssistente + ' move os leads entre as colunas automaticamente e avisa quando alguém esquenta.'; }
+    var c1 = document.getElementById('cfg-assist1'); if(c1) c1.textContent = nomeAssistente;
+    var c2 = document.getElementById('cfg-assist2'); if(c2) c2.textContent = nomeAssistente;
 
     window.MINHA_EMPRESA = lig.data.company_id;
 
