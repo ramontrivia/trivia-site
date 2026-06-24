@@ -356,10 +356,10 @@
     leads.forEach(function(l){
       var fase = (l.stage==='quente'||l.stage==='morno') ? l.stage : 'frio';
       cnt[fase]++;
-      var nome = (l.name && l.name.trim()) ? l.name : ('Contato ' + (l.phone||'').slice(-4));
+      var nome = (l.name && l.name.trim()) ? limparNome(l.name) : ('Contato ' + (l.phone||'').slice(-4));
       var card = document.createElement('div');
       card.className='kcard';
-      card.innerHTML = '<div class="n">'+nome+'</div><div class="s">'+rotuloFase(fase)+'</div>';
+      card.innerHTML = '<div class="n">'+escapeHtml(nome)+'</div><div class="s">'+rotuloFase(fase)+'</div>';
       cols[fase].appendChild(card);
     });
     document.getElementById('ct-quente').textContent = cnt.quente;
@@ -395,6 +395,20 @@
   var TODOS_LEADS = [];
   function iniciais(nome){ return nome.split(' ').map(function(p){return p[0]}).join('').substring(0,2).toUpperCase(); }
   function escapeHtml(t){ var d=document.createElement('div'); d.textContent=t||''; return d.innerHTML; }
+  function limparNome(nome){
+    if(!nome) return '';
+    var t = nome.trim();
+    // remove prefixos comuns: "meu nome é", "me chamo", "sou o/a", "aqui é o/a"
+    var m = t.match(/(?:meu nome (?:é|e)|me chamo|sou (?:o|a)?|aqui (?:é|e) (?:o|a)?)\s+(.+)/i);
+    if(m && m[1]) t = m[1].trim();
+    // tira pontuação final
+    t = t.replace(/[.,;!?]+$/,'').trim();
+    // se virou frase longa (mais de 3 palavras), pega só as 2 primeiras
+    var palavras = t.split(/\s+/);
+    if(palavras.length > 3) t = palavras.slice(0,2).join(' ');
+    // capitaliza
+    return t.split(' ').map(function(p){ return p ? p.charAt(0).toUpperCase()+p.slice(1) : p; }).join(' ');
+  }
 
   // ===== DADOS REAIS: RELATÓRIOS =====
   async function carregarRelatorios(){
@@ -469,7 +483,7 @@
       var d = new Date(a.scheduled_at);
       var data = ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2);
       var hora = ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
-      var cliente = a.customer_name || ('Contato '+(a.customer_phone||'').slice(-4));
+      var cliente = a.customer_name ? limparNome(a.customer_name) : ('Contato '+(a.customer_phone||'').slice(-4));
       var prof = (a.tp_providers && a.tp_providers.name) ? a.tp_providers.name : '';
       var serv = (a.tp_services && a.tp_services.name) ? a.tp_services.name : 'Atendimento';
       var detalhe = serv + (prof ? ' · com '+prof : '');
@@ -490,7 +504,7 @@
     lista.innerHTML='';
     if(!leads.length){ lista.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:10px">Nenhum cliente ainda.</p>'; return; }
     leads.forEach(function(l){
-      var nome = (l.name && l.name.trim()) ? l.name : ('Contato '+(l.phone||'').slice(-4));
+      var nome = (l.name && l.name.trim()) ? limparNome(l.name) : ('Contato '+(l.phone||'').slice(-4));
       var item = document.createElement('div');
       item.className='conv-item';
       item.onclick = function(){ abrirConversa(item, l); };
@@ -507,7 +521,7 @@
   async function abrirConversa(el, lead){
     document.querySelectorAll('.conv-item').forEach(function(c){c.classList.remove('active');});
     el.classList.add('active');
-    var nome = (lead.name && lead.name.trim()) ? lead.name : ('Contato '+(lead.phone||'').slice(-4));
+    var nome = (lead.name && lead.name.trim()) ? limparNome(lead.name) : ('Contato '+(lead.phone||'').slice(-4));
     document.getElementById('cv-nm').textContent = nome;
     document.getElementById('cv-av').textContent = iniciais(nome);
     document.getElementById('cv-meta').textContent = (lead.phone||'') + ' · lead ' + (lead.stage||'frio');
