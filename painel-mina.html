@@ -110,8 +110,8 @@
     animation:hudsweep 4s ease-in-out infinite; z-index:4;}
   @keyframes hudsweep{0%{top:18%;opacity:0;}10%{opacity:1;}50%{top:80%;opacity:1;}60%{opacity:0;}100%{top:18%;opacity:0;}}
   .hud-marker{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);z-index:6;
-    background:#ffffff;border:1.5px solid #0f5c2e;border-radius:8px;padding:0.8vh 1.4vw;
-    color:#0f5c2e;font-family:'Space Grotesk',sans-serif;font-size:clamp(11px,1.5vh,16px);font-weight:700;letter-spacing:1px;
+    background:#ffffff;border:1.5px solid #c9820c;border-radius:8px;padding:0.8vh 1.4vw;
+    color:#8a5a08;font-family:'Space Grotesk',sans-serif;font-size:clamp(11px,1.5vh,16px);font-weight:700;letter-spacing:1px;
     box-shadow:none;text-align:center;white-space:nowrap;}
 
   /* SLIDE 2 — layout dividido: projeto real + monitoramento */
@@ -455,7 +455,7 @@
     const rAtFill = rBase + (rTop-rBase)*fillFrac;
     const fillGeo = new THREE.CylinderGeometry(rAtFill, rBase, fillH, 42, 1);
     [[1.0,0.9],[1.02,0.35],[1.045,0.15]].forEach(([scale,op])=>{
-      const mat = new THREE.MeshStandardMaterial({color:0x0f5c2e, emissive:0x0a3d1e, emissiveIntensity:0.9, roughness:0.5, transparent:true, opacity:op});
+      const mat = new THREE.MeshStandardMaterial({color:0xc9820c, emissive:0x7a4a06, emissiveIntensity:0.9, roughness:0.5, transparent:true, opacity:op});
       const m = new THREE.Mesh(fillGeo, mat);
       m.scale.set(scale,1,scale);
       m.position.y = -H/2 + fillH/2;
@@ -463,7 +463,7 @@
     });
 
     const ringGeo = new THREE.TorusGeometry(rAtFill, 1.3, 10, 64);
-    coneRing = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({color:0x0f5c2e}));
+    coneRing = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({color:0xc9820c}));
     coneRing.rotation.x = Math.PI/2;
     coneRing.position.y = -H/2 + fillH;
     coneGroup.add(coneRing);
