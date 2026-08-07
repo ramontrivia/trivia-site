@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trívia — Soluções digitais</title>
+<meta name="description" content="A Trívia está chegando à região com o melhor da tecnologia para todos os pontos da sua empresa. Registre a sua na lista de espera.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --preto:#050505;
+  --ouro:#e8b93b;
+  --ouro-claro:#f8dd85;
+  --ouro-escuro:#9c740f;
+  --branco:#f7f5f0;
+  --cinza:#8b857d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--preto);
+  color:var(--branco);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+h1,h2,.wordmark,.btn{font-family:'Sora',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+.dourado{
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 40%,var(--ouro-claro) 55%,var(--ouro) 70%,var(--ouro-escuro));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+
+/* ===== CENA ===== */
+#cena{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.veu{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 114%, rgba(5,5,5,.94), transparent 60%),
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(232,185,59,.05), transparent 55%);
+}
+
+.conteudo{position:relative;z-index:2}
+
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:24px 6vw;
+}
+.wordmark{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;color:var(--branco);text-decoration:none}
+.selo{
+  font-size:.64rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ouro);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.selo::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--ouro);box-shadow:0 0 10px var(--ouro);
+  animation:respira 2.4s ease-in-out infinite;
+}
+@keyframes respira{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ===== HERO / IA ===== */
+.hero{
+  min-height:92vh;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+  text-align:center;
+  padding:34vh 6vw 6vh;
+}
+.ia-status{
+  font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--ouro);
+  margin-bottom:34px;
+  min-height:1.2em;
+  opacity:.85;
+}
+.ia-status .ok{color:var(--ouro-claro)}
+.saud{
+  font-size:clamp(1.15rem,3vw,1.7rem);
+  font-weight:300;letter-spacing:.01em;
+  color:var(--ouro-claro);
+  min-height:1.6em;
+  margin-bottom:22px;
+}
+.hero h1{
+  font-size:clamp(2.2rem,6.6vw,4.5rem);
+  font-weight:300;line-height:1.16;letter-spacing:-.03em;
+  max-width:18ch;
+  min-height:2.3em;
+}
+.hero h1 strong{font-weight:800}
+.cursor{
+  display:inline-block;width:.55em;height:1.05em;
+  background:var(--ouro);vertical-align:-.12em;margin-left:3px;
+  animation:pisca 1s steps(1) infinite;
+  border-radius:2px;
+}
+@keyframes pisca{50%{opacity:0}}
+.hero .assina{
+  margin-top:30px;
+  font-size:.78rem;font-weight:400;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--cinza);
+  opacity:0;transition:opacity 1s ease;
+}
+.desce{
+  margin-top:10vh;
+  color:var(--cinza);font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
+  opacity:0;transition:opacity 1s ease;
+  animation:flutua 2.8s ease-in-out infinite;
+}
+.hero.pronto .assina,.hero.pronto .desce{opacity:1}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ===== BLOCOS ===== */
+.bloco{
+  min-height:56vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:12vh 6vw;
+  opacity:0;transform:translateY(30px);
+  transition:opacity .9s ease, transform .9s ease;
+}
+.bloco.visivel{opacity:1;transform:translateY(0)}
+.bloco .rotulo{
+  font-size:.66rem;font-weight:500;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--ouro);margin-bottom:26px;
+}
+.bloco h2{
+  font-size:clamp(1.45rem,3.6vw,2.5rem);
+  font-weight:300;line-height:1.42;letter-spacing:-.01em;
+  max-width:26ch;
+}
+.bloco h2 strong{font-weight:600}
+.bloco p.apoio{
+  margin-top:22px;
+  font-size:clamp(.95rem,2vw,1.08rem);font-weight:300;
+  color:var(--cinza);max-width:34rem;
+}
+.areas{
+  margin-top:40px;
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:10px 0;
+  max-width:44rem;
+}
+
+.area{
+  font-size:clamp(.72rem,1.7vw,.86rem);
+  font-weight:400;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(139,133,125,.55);
+  padding:0 clamp(12px,2.2vw,20px);
+  transition:color .8s ease, text-shadow .8s ease;
+  white-space:nowrap;
+}
+.area + .area{border-left:1px solid rgba(232,185,59,.22)}
+.area.acesa{
+  color:var(--ouro-claro);
+  text-shadow:0 0 18px rgba(232,185,59,.5);
+}
+.divisa{
+  width:1px;height:64px;margin:0 auto;
+  background:linear-gradient(180deg,transparent,rgba(232,185,59,.4),transparent);
+}
+
+/* ===== LISTA ===== */
+.lista{
+  min-height:66vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:12vh 6vw 14vh;
+  opacity:0;transform:translateY(30px);
+  transition:opacity .9s ease, transform .9s ease;
+}
+.lista.visivel{opacity:1;transform:translateY(0)}
+.lista h2{
+  font-size:clamp(1.9rem,5vw,3.3rem);
+  font-weight:800;letter-spacing:-.03em;line-height:1.14;
+  max-width:18ch;
+}
+.lista p{
+  margin-top:20px;margin-bottom:46px;
+  font-weight:300;color:var(--cinza);max-width:30rem;
+}
+.btn{
+  font-weight:700;font-size:.95rem;letter-spacing:.02em;
+  text-decoration:none;border-radius:14px;padding:18px 38px;
+  display:inline-flex;align-items:center;gap:12px;
+  color:var(--preto);
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 45%,var(--ouro-claro));
+  box-shadow:0 0 44px rgba(232,185,59,.22), 0 4px 18px rgba(0,0,0,.5);
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 66px rgba(232,185,59,.42), 0 8px 26px rgba(0,0,0,.5)}
+.link-insta{
+  margin-top:26px;
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:.82rem;letter-spacing:.08em;font-weight:400;
+  color:var(--cinza);text-decoration:none;
+  padding:10px 20px;border-radius:999px;
+  border:1px solid rgba(232,185,59,.22);
+  transition:color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.link-insta:hover{
+  color:var(--ouro-claro);
+  border-color:rgba(232,185,59,.5);
+  box-shadow:0 0 22px rgba(232,185,59,.16);
+}
+.lista .nota{
+  margin-top:22px;margin-bottom:0;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cinza);
+}
+
+footer{
+  position:relative;z-index:2;
+  padding:36px 6vw;text-align:center;
+  color:var(--cinza);font-size:.78rem;letter-spacing:.05em;font-weight:300;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+footer .marca-pe{font-family:'Sora',sans-serif;font-weight:600;color:var(--branco)}
+footer a{color:var(--ouro);text-decoration:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .bloco,.lista{opacity:1;transform:none}
+  .hero .assina,.desce{opacity:1}
+  .cursor{display:none}
+}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<canvas id="cena" aria-hidden="true"></canvas>
+<div class="veu" aria-hidden="true"></div>
+
+<div class="conteudo">
+
+<nav>
+  <a class="wordmark" href="#topo">Trí<span class="dourado">via</span></a>
+  <span class="selo">Em breve</span>
+</nav>
+
+<header class="hero" id="topo">
+  <div class="ia-status mono" id="iaStatus" aria-live="polite"></div>
+  <div class="saud" id="saud">Olá, membro do BNI.</div>
+  <h1 id="titulo"><span id="tituloTexto">A <strong>Trí<span class="dourado">via</span></strong> agradece a sua visita.</span></h1>
+  <div class="assina">Soluções digitais</div>
+  <div class="desce">Deslize</div>
+</header>
+
+<section class="bloco">
+  <div class="rotulo">Conexões</div>
+  <h2>É uma honra participar do <strong>BNI</strong> e construir conexões como esta. Algumas visitas marcam o início de <strong class="dourado">grandes histórias</strong>.</h2>
+</section>
+
+<div class="divisa" aria-hidden="true"></div>
+
+<section class="bloco">
+  <div class="rotulo">A chegada</div>
+  <h2>A Trívia está chegando à região com o melhor da tecnologia para <strong class="dourado">todos os pontos</strong> da sua empresa.</h2>
+  <p class="apoio">Inteligência artificial, automação e presença digital — implementadas sob medida.</p>
+  <div class="areas" aria-label="Áreas de atuação">
+    <span class="area">Atendimento</span>
+    <span class="area">Vendas</span>
+    <span class="area">Marketing</span>
+    <span class="area">Conteúdo</span>
+    <span class="area">Automação</span>
+    <span class="area">Dados</span>
+  </div>
+</section>
+
+<div class="divisa" aria-hidden="true"></div>
+
+<section class="bloco">
+  <div class="rotulo">Este momento</div>
+  <h2>Neste momento, calibramos os últimos detalhes e <strong>escaneamos a região e o mercado</strong>. Em breve, iniciamos operação.</h2>
+</section>
+
+<div class="divisa" aria-hidden="true"></div>
+
+<section class="lista">
+  <h2>As primeiras empresas da região já estão <span class="dourado">garantindo seu lugar</span>.</h2>
+  <p>Deixe o seu registrado.</p>
+  <a class="btn" href="https://wa.me/5531996073905?text=Ol%C3%A1!%20Estive%20no%20evento%20do%20BNI%20e%20quero%20registrar%20minha%20empresa%20na%20lista%20de%20espera%20da%20Tr%C3%ADvia." target="_blank" rel="noopener">
+    Fale conosco
+    <svg width="15" height="17" viewBox="0 0 30 34" aria-hidden="true"><path d="M3 3 L27 17 L3 31 Z" fill="currentColor"/></svg>
+  </a>
+  <a class="link-insta" href="https://www.instagram.com/trivia.tecnologia" target="_blank" rel="noopener">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>
+    </svg>
+    Siga a Trívia no Instagram
+  </a>
+  <p class="nota">Lista de espera · Prioridade de implementação</p>
+</section>
+
+</div>
+
+<footer>
+  <span class="marca-pe">Trí<span class="dourado">via</span></span> — Soluções digitais &nbsp;·&nbsp; WhatsApp <a href="https://wa.me/5531996073905" target="_blank" rel="noopener">(31) 99607-3905</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/trivia.tecnologia" target="_blank" rel="noopener">Instagram</a>
+</footer>
+
+<script>
+/* ============================================================
+   SEQUÊNCIA DE ENTRADA — a IA "reconhece" o visitante
+   ============================================================ */
+(function(){
+  var reduz=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hero=document.querySelector(".hero");
+  var status=document.getElementById("iaStatus");
+  var saud=document.getElementById("saud");
+  var tituloTexto=document.getElementById("tituloTexto");
+
+  if(reduz){
+    status.innerHTML='TRÍVIA AI · <span class="ok">conectado</span> · evento BNI identificado';
+    hero.classList.add("pronto");
+    return;
+  }
+
+  /* guarda o HTML final e limpa para digitar */
+  var saudFinal="Olá, membro do BNI.";
+  var tituloFinal=tituloTexto.innerHTML;
+  saud.textContent="";
+  tituloTexto.innerHTML="";
+
+  var cursor=document.createElement("span");
+  cursor.className="cursor";
+
+  function digitaTexto(el,texto,vel,cb){
+    el.appendChild(cursor);
+    var i=0;
+    (function tick(){
+      if(i<texto.length){
+        el.insertBefore(document.createTextNode(texto[i]),cursor);
+        i++;
+        setTimeout(tick,vel+Math.random()*40);
+      }else if(cb){setTimeout(cb,350);}
+    })();
+  }
+
+  /* digita HTML preservando as tags (para o dourado do "via") */
+  function digitaHTML(el,html,vel,cb){
+    el.appendChild(cursor);
+    var tmp=document.createElement("div");
+    tmp.innerHTML=html;
+    var fila=[];
+    (function achata(nodo,alvo){
+      Array.prototype.forEach.call(nodo.childNodes,function(n){
+        if(n.nodeType===3){
+          for(var c=0;c<n.textContent.length;c++)fila.push({alvo:alvo,ch:n.textContent[c]});
+        }else{
+          var clone=n.cloneNode(false);
+          fila.push({alvo:alvo,el:clone});
+          achata(n,clone);
+        }
+      });
+    })(tmp,el);
+    var i=0;
+    (function tick(){
+      if(i<fila.length){
+        var item=fila[i++];
+        if(item.el){item.alvo.insertBefore(item.el,item.alvo===el?cursor:null);}
+        else{item.alvo.insertBefore(document.createTextNode(item.ch),item.alvo===el?cursor:null);}
+        setTimeout(tick,item.el?0:vel+Math.random()*30);
+      }else if(cb){setTimeout(cb,400);}
+    })();
+  }
+
+  var linhas=[
+    'TRÍVIA AI · iniciando',
+    'TRÍVIA AI · <span class="ok">conectado</span>',
+    'TRÍVIA AI · <span class="ok">conectado</span> · evento BNI identificado'
+  ];
+  var l=0;
+  (function proximaLinha(){
+    status.innerHTML=linhas[l];
+    l++;
+    if(l<linhas.length){setTimeout(proximaLinha,l===1?900:800);}
+    else{
+      setTimeout(function(){
+        digitaTexto(saud,saudFinal,55,function(){
+          digitaHTML(tituloTexto,tituloFinal,42,function(){
+            cursor.remove();
+            hero.classList.add("pronto");
+          });
+        });
+      },600);
+    }
+  })();
+})();
+
+/* ===== Áreas acendendo em sequência ===== */
+(function(){
+  var areas=document.querySelectorAll(".area");
+  if(!areas.length)return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    areas.forEach(function(a){a.classList.add("acesa");});
+    return;
+  }
+  var i=0;
+  setInterval(function(){
+    areas.forEach(function(a){a.classList.remove("acesa");});
+    areas[i].classList.add("acesa");
+    i=(i+1)%areas.length;
+  },1500);
+})();
+
+/* ===== Revelar blocos no scroll ===== */
+(function(){
+  var itens=document.querySelectorAll(".bloco,.lista");
+  if(!("IntersectionObserver" in window)){itens.forEach(function(p){p.classList.add("visivel");});return;}
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add("visivel");obs.unobserve(e.target);}
+    });
+  },{threshold:.25});
+  itens.forEach(function(p){obs.observe(p);});
+})();
+
+/* ============================================================
+   CENA — milhares de partículas formam a logo da Trívia
+   ============================================================ */
+(function(){
+  var canvas=document.getElementById("cena");
+  var ctx=canvas.getContext("2d");
+  var reduz=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var W,H,CX,CY,ESC;
+
+  var particulas=[];
+  var livres=[];
+  var alvosBase=[];   /* pontos da logo em coordenadas unitárias */
+  var perims=[];      /* perímetros p/ pulso de luz */
+
+  /* ---------- gera os pontos da logo (3 triângulos aninhados) ---------- */
+  function pontosTriangulo(escala,passo){
+    /* triângulo apontando p/ direita, centrado */
+    var v=[[-.5*escala,-.62*escala],[.9*escala,0],[-.5*escala,.62*escala]];
+    var pts=[],per=[];
+    for(var a=0;a<3;a++){
+      var p=v[a],q=v[(a+1)%3];
+      var dist=Math.hypot(q[0]-p[0],q[1]-p[1]);
+      var n=Math.max(2,Math.round(dist/passo));
+      for(var t=0;t<n;t++){
+        var k=t/n;
+        var pt=[p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k];
+        pts.push(pt);per.push(pt);
+      }
+    }
+    return{pts:pts,per:per};
+  }
+
+  function montaAlvos(){
+    alvosBase=[];perims=[];
+    var escalas=[1,.66,.34];
+    var passos=[.016,.02,.026];
+    escalas.forEach(function(s,i){
+      var r=pontosTriangulo(s,passos[i]);
+      r.pts.forEach(function(p){alvosBase.push({x:p[0],y:p[1],anel:i});});
+      perims.push(r.per);
+    });
+  }
+  montaAlvos();
+
+  function dimensiona(){
+    var DPR=Math.min(window.devicePixelRatio||1,2);
+    W=window.innerWidth;H=window.innerHeight;
+    canvas.width=W*DPR;canvas.height=H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    CX=W/2;CY=H*.20;
+    ESC=Math.min(W,H)*.26;
+  }
+  dimensiona();
+  window.addEventListener("resize",function(){dimensiona();montaChuva();});
+
+  /* ---------- chuva de código dourada ---------- */
+  var CHARS="01{}[]()<>=/;:+*#&$%λƒ∆.".split("");
+  var colunas=[];
+  var TAM_F=15;      /* tamanho da fonte */
+  var TRILHA=14;     /* comprimento do rastro */
+
+  function montaChuva(){
+    colunas=[];
+    var passo=Math.max(24,Math.round(W/38));
+    for(var x=passo/2;x<W;x+=passo){
+      colunas.push({
+        x:x+(Math.random()-.5)*6,
+        y:Math.random()*H,
+        vel:.5+Math.random()*1.3,
+        prox:0,
+        chars:[]
+      });
+    }
+  }
+  montaChuva();
+
+  function desenhaChuva(t){
+    ctx.font=TAM_F+"px 'JetBrains Mono',monospace";
+    ctx.textAlign="center";
+    for(var c=0;c<colunas.length;c++){
+      var col=colunas[c];
+      col.y+=col.vel;
+      if(col.y-col.prox>TAM_F){
+        col.prox=col.y;
+        col.chars.unshift(CHARS[Math.floor(Math.random()*CHARS.length)]);
+        if(col.chars.length>TRILHA)col.chars.pop();
+      }
+      if(col.y-TRILHA*TAM_F>H){
+        col.y=-Math.random()*H*.5;
+        col.prox=col.y;
+        col.vel=.5+Math.random()*1.3;
+        col.chars=[];
+      }
+      for(var k=0;k<col.chars.length;k++){
+        var yk=col.y-k*TAM_F;
+        if(yk<-TAM_F||yk>H+TAM_F)continue;
+        var al=k===0
+          ? .26+.08*Math.sin(t*.004+c)
+          : (1-k/TRILHA)*.13;
+        ctx.fillStyle=k===0
+          ? "rgba(248,221,133,"+al+")"
+          : "rgba(232,185,59,"+al+")";
+        ctx.fillText(col.chars[k],col.x,yk);
+      }
+    }
+  }
+
+  /* ---------- cria partículas ---------- */
+  function criaParticulas(){
+    particulas=alvosBase.map(function(a){
+      var ang=Math.PI+Math.random()*Math.PI;
+      var r=Math.max(W,H)*(.45+Math.random()*.45);
+      return{
+        x:CX+Math.cos(ang)*r,
+        y:CY+Math.sin(ang)*r,
+        vx:0,vy:0,
+        ax:a.x,ay:a.y,anel:a.anel,
+        atraso:Math.random()*1400,
+        fase:Math.random()*Math.PI*2,
+        tam:.9+Math.random()*1.3
+      };
+    });
+    livres=[];
+    var NL=Math.min(130,Math.round(W*H/16000));
+    for(var i=0;i<NL;i++){
+      livres.push({
+        x:Math.random()*W,y:Math.random()*H,
+        vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,
+        z:.3+Math.random()*.7,
+        fase:Math.random()*Math.PI*2
+      });
+    }
+  }
+  criaParticulas();
+
+  /* ---------- interação ---------- */
+  var mx=-9999,my=-9999;
+  window.addEventListener("mousemove",function(e){mx=e.clientX;my=e.clientY;},{passive:true});
+  window.addEventListener("touchmove",function(e){
+    if(e.touches[0]){mx=e.touches[0].clientX;my=e.touches[0].clientY;}
+  },{passive:true});
+  window.addEventListener("touchend",function(){mx=-9999;my=-9999;},{passive:true});
+
+  var inicio=null;
+
+  /* ---------- ciclo de cenas ---------- */
+  var FASES={formar:5200,segurar:3800,dissolver:2000,radar:9000};
+  var fase="formar", faseT=0, impulsoDado=false;
+  var alfaLogo=1, alfaRadar=0;
+
+  /* nós do radar de fundo */
+  var nosBG=[];
+  for(var q=0;q<22;q++){
+    var aq=Math.random()*Math.PI*2, rq=Math.sqrt(Math.random())*.88;
+    nosBG.push({x:Math.cos(aq)*rq,y:Math.sin(aq)*rq,f:Math.random()*6.28,det:0});
+  }
+  var viasBG=[
+    [[-1,.12],[-.5,.08],[0,0],[.5,-.04],[1,-.10]],
+    [[-.6,-1],[-.42,-.4],[-.28,0],[-.2,.5],[-.1,1]],
+    [[.6,-1],[.42,-.3],[.28,.06],[.16,.6],[.08,1]],
+    [[-1,-.44],[-.4,-.34],[.1,-.3],[.6,-.36],[1,-.3]],
+    [[-1,.54],[-.4,.46],[.14,.42],[.6,.5],[1,.46]]
+  ];
+
+  function reiniciaParticulas(){
+    for(var i=0;i<particulas.length;i++){
+      var p=particulas[i];
+      var ang=Math.PI+Math.random()*Math.PI;
+      var r=Math.max(W,H)*(.45+Math.random()*.45);
+      p.x=CX+Math.cos(ang)*r;
+      p.y=CY+Math.sin(ang)*r;
+      p.vx=0;p.vy=0;
+      p.atraso=Math.random()*1200;
+    }
+  }
+
+  function avancaFase(t){
+    if(t-faseT < FASES[fase]) return;
+    faseT=t;
+    if(fase==="formar"){fase="segurar";}
+    else if(fase==="segurar"){fase="dissolver";impulsoDado=false;}
+    else if(fase==="dissolver"){fase="radar";}
+    else{fase="formar";reiniciaParticulas();}
+  }
+
+  function desenhaRadarBG(t){
+    if(alfaRadar<=.01)return;
+    var RR=ESC*1.28;
+    var ang=(t*.0007)%(Math.PI*2);
+    ctx.save();
+    ctx.globalAlpha=alfaRadar;
+    ctx.translate(CX,CY);
+
+    ctx.save();
+    ctx.beginPath();ctx.arc(0,0,RR,0,7);ctx.clip();
+
+    /* vias */
+    ctx.lineJoin="round";ctx.lineCap="round";
+    viasBG.forEach(function(v,vi){
+      ctx.beginPath();
+      ctx.moveTo(v[0][0]*RR*.95,v[0][1]*RR*.95);
+      for(var k=1;k<v.length;k++)ctx.lineTo(v[k][0]*RR*.95,v[k][1]*RR*.95);
+      ctx.lineWidth=vi===0?2:1.1;
+      ctx.strokeStyle=vi===0?"rgba(232,185,59,.40)":"rgba(232,185,59,.20)";
+      ctx.stroke();
+    });
+
+    /* anéis + cruz */
+    ctx.strokeStyle="rgba(232,185,59,.17)";ctx.lineWidth=1;
+    [.32,.6,.88].forEach(function(k){
+      ctx.beginPath();ctx.arc(0,0,RR*k,0,7);ctx.stroke();
+    });
+    ctx.strokeStyle="rgba(232,185,59,.13)";
+    ctx.beginPath();ctx.moveTo(0,-RR*.92);ctx.lineTo(0,RR*.92);
+    ctx.moveTo(-RR*.92,0);ctx.lineTo(RR*.92,0);ctx.stroke();
+
+    /* feixe */
+    if(ctx.createConicGradient){
+      var cg=ctx.createConicGradient(ang,0,0);
+      cg.addColorStop(0,"rgba(232,185,59,.30)");
+      cg.addColorStop(.08,"rgba(232,185,59,.05)");
+      cg.addColorStop(.3,"rgba(232,185,59,0)");
+      cg.addColorStop(1,"rgba(232,185,59,0)");
+      ctx.fillStyle=cg;
+      ctx.beginPath();ctx.arc(0,0,RR,0,7);ctx.fill();
+    }
+    ctx.strokeStyle="rgba(248,221,133,.65)";ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos(ang)*RR*.97,Math.sin(ang)*RR*.97);
+    ctx.stroke();
+
+    /* nós detectados */
+    nosBG.forEach(function(n){
+      var nx=n.x*RR*.9, ny=n.y*RR*.9;
+      var na=Math.atan2(ny,nx);
+      var dif=((ang-na)%6.2832+6.2832)%6.2832;
+      if(dif<.13)n.det=1;
+      n.det*=.985;
+      var al=Math.min(1,(.16+.1*Math.sin(t*.002+n.f))+n.det*.85);
+      ctx.fillStyle="rgba(232,185,59,"+al+")";
+      ctx.beginPath();ctx.arc(nx,ny,1.7+n.det*2.4,0,7);ctx.fill();
+      if(n.det>.25){
+        ctx.strokeStyle="rgba(248,221,133,"+(n.det*.4)+")";
+        ctx.lineWidth=1;
+        ctx.beginPath();ctx.arc(nx,ny,4+(1-n.det)*11,0,7);ctx.stroke();
+      }
+    });
+
+    /* pulso central */
+    var pl=(t*.0006)%1;
+    for(var k3=0;k3<2;k3++){
+      var pk3=(pl+k3*.5)%1;
+      ctx.strokeStyle="rgba(248,221,133,"+((1-pk3)*.5)+")";
+      ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.arc(0,0,pk3*RR*.85,0,7);ctx.stroke();
+    }
+    var gl2=ctx.createRadialGradient(0,0,0,0,0,26);
+    gl2.addColorStop(0,"rgba(255,240,200,.9)");
+    gl2.addColorStop(.25,"rgba(232,185,59,.4)");
+    gl2.addColorStop(1,"rgba(232,185,59,0)");
+    ctx.fillStyle=gl2;
+    ctx.beginPath();ctx.arc(0,0,26,0,7);ctx.fill();
+    ctx.fillStyle="rgba(255,248,225,1)";
+    ctx.beginPath();ctx.arc(0,0,3,0,7);ctx.fill();
+
+    ctx.restore();
+
+    /* borda + cardeais */
+    ctx.strokeStyle="rgba(232,185,59,.32)";ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(0,0,RR,0,7);ctx.stroke();
+    ctx.strokeStyle="rgba(232,185,59,.5)";ctx.lineWidth=1.6;
+    for(var m=0;m<4;m++){
+      var a3=m*Math.PI/2;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a3)*RR*.94,Math.sin(a3)*RR*.94);
+      ctx.lineTo(Math.cos(a3)*RR,Math.sin(a3)*RR);
+      ctx.stroke();
+    }
+
+    /* rótulo do local */
+    ctx.textAlign="center";
+    ctx.fillStyle="rgba(248,221,133,.95)";
+    ctx.font="600 "+Math.max(12,RR*.11)+"px Sora, sans-serif";
+    ctx.fillText("Espaço Faleiro's",0,-26);
+    ctx.fillStyle="rgba(160,153,143,.95)";
+    ctx.font=Math.max(9,RR*.062)+"px 'JetBrains Mono', monospace";
+    ctx.fillText("MATEUS LEME · MG",0,-11);
+
+    /* HUD de varredura */
+    var la=(-19.9758+Math.sin(t*.0013)*.0006).toFixed(4);
+    var lo=(-44.4341+Math.cos(t*.0011)*.0006).toFixed(4);
+    ctx.textAlign="left";
+    ctx.font=Math.max(8.5,RR*.058)+"px 'JetBrains Mono', monospace";
+    var pisca=.5+.5*Math.sin(t*.005);
+    ctx.fillStyle="rgba(232,185,59,"+(.45+pisca*.45)+")";
+    ctx.fillText("● VARREDURA ATIVA",-RR*.9,-RR*.78);
+    ctx.fillStyle="rgba(232,185,59,.7)";
+    ctx.fillText(la+"° S  "+lo+"° W",-RR*.9,-RR*.78+Math.max(12,RR*.085));
+
+    ctx.restore();
+  }
+
+  function desenha(t){
+    if(inicio===null){inicio=t;faseT=t;}
+    var vida=t-inicio;
+    ctx.clearRect(0,0,W,H);
+
+    /* controle do ciclo de cenas */
+    avancaFase(t);
+    var dentro=t-faseT;
+    if(fase==="formar"){alfaLogo=Math.min(1,alfaLogo+.03);alfaRadar=Math.max(0,alfaRadar-.04);}
+    else if(fase==="segurar"){alfaLogo=1;alfaRadar=0;}
+    else if(fase==="dissolver"){alfaLogo=Math.max(0,1-dentro/FASES.dissolver);alfaRadar=0;}
+    else{alfaLogo=0;alfaRadar=Math.min(1,Math.max(0,Math.min(dentro/900,(FASES.radar-dentro)/900)));}
+
+    /* camada 1: chuva de código */
+    desenhaChuva(t);
+
+    /* rotação 3D suave da logo montada */
+    var rotY=Math.sin(t*.00028)*.5;
+    var rotX=Math.sin(t*.0002)*.16;
+    var cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+    var cosX=Math.cos(rotX),sinX=Math.sin(rotX);
+
+    function projeta(ax,ay){
+      var x=ax,y=ay,z=0;
+      var x1=x*cosY - z*sinY, z1=x*sinY + z*cosY;
+      var y1=y*cosX - z1*sinX, z2=y*sinX + z1*cosX;
+      var persp=3/(3+z2);
+      return{x:CX+x1*ESC*persp,y:CY+y1*ESC*persp,p:persp};
+    }
+
+    /* ----- partículas livres (poeira conectada) ----- */
+    for(var i=0;i<livres.length;i++){
+      var f=livres[i];
+      f.x+=f.vx;f.y+=f.vy;
+      if(f.x<-20)f.x=W+20;if(f.x>W+20)f.x=-20;
+      if(f.y<-20)f.y=H+20;if(f.y>H+20)f.y=-20;
+      var al=(0.10+0.16*f.z)*(0.75+.25*Math.sin(t*.001+f.fase));
+      ctx.fillStyle="rgba(232,185,59,"+al+")";
+      ctx.beginPath();ctx.arc(f.x,f.y,f.z*1.6,0,7);ctx.fill();
+    }
+    ctx.lineWidth=1;
+    var lim=Math.min(W,H)*.11;
+    for(var i=0;i<livres.length;i++){
+      for(var j=i+1;j<livres.length;j++){
+        var dx=livres[i].x-livres[j].x,dy=livres[i].y-livres[j].y;
+        if(Math.abs(dx)>lim||Math.abs(dy)>lim)continue;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<lim){
+          ctx.strokeStyle="rgba(232,185,59,"+((1-d/lim)*.07)+")";
+          ctx.beginPath();ctx.moveTo(livres[i].x,livres[i].y);ctx.lineTo(livres[j].x,livres[j].y);ctx.stroke();
+        }
+      }
+    }
+
+    /* ----- núcleo brilhante ----- */
+    var nucleo=projeta(-.03,0);
+    var g=ctx.createRadialGradient(nucleo.x,nucleo.y,0,nucleo.x,nucleo.y,ESC*.5);
+    g.addColorStop(0,"rgba(232,185,59,.10)");
+    g.addColorStop(.55,"rgba(232,185,59,.03)");
+    g.addColorStop(1,"rgba(232,185,59,0)");
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.arc(nucleo.x,nucleo.y,ESC*.5,0,7);ctx.fill();
+
+    /* ----- partículas da logo ----- */
+    if(fase==="dissolver" && !impulsoDado){
+      impulsoDado=true;
+      for(var d=0;d<particulas.length;d++){
+        var pd=particulas[d];
+        var dxd=pd.x-CX, dyd=pd.y-CY;
+        var dd=Math.hypot(dxd,dyd)||1;
+        pd.vx+=dxd/dd*(3+Math.random()*4);
+        pd.vy+=dyd/dd*(3+Math.random()*4)-1.5;
+      }
+    }
+    var atrai=(fase==="formar"||fase==="segurar");
+
+    for(var i=0;i<particulas.length;i++){
+      var p=particulas[i];
+      var alvoProj=projeta(p.ax,p.ay);
+      var prog=atrai?Math.max(0,Math.min(1,(dentro-p.atraso)/1600)):1;
+      var e=1-Math.pow(1-prog,3);
+
+      var resp=1+Math.sin(t*.0011+p.fase)*.006;
+      var tx=CX+(alvoProj.x-CX)*resp;
+      var ty=CY+(alvoProj.y-CY)*resp;
+
+      if(atrai){
+        var dxA=tx-p.x, dyA=ty-p.y;
+        p.vx+=dxA*.0026*e;
+        p.vy+=dyA*.0026*e;
+
+        var dxm=p.x-mx,dym=p.y-my;
+        var dm=dxm*dxm+dym*dym;
+        var rInf=Math.min(W,H)*.14;
+        if(dm<rInf*rInf){
+          var dmr=Math.sqrt(dm)||1;
+          var forca=(1-dmr/rInf)*1.9;
+          p.vx+=dxm/dmr*forca;
+          p.vy+=dym/dmr*forca;
+        }
+        p.vx*=.86;p.vy*=.86;
+      }else{
+        p.vx*=.985;p.vy*=.985;
+      }
+      p.x+=p.vx;p.y+=p.vy;
+
+      if(alfaLogo<=.01)continue;
+      var alfa=(0.25+0.65*e)*alvoProj.p*alfaLogo;
+      var brilho=.75+.25*Math.sin(t*.0016+p.fase);
+      var cor=p.anel===1?"248,221,133":"232,185,59";
+      ctx.fillStyle="rgba("+cor+","+(alfa*brilho)+")";
+      ctx.beginPath();ctx.arc(p.x,p.y,p.tam*alvoProj.p,0,7);ctx.fill();
+    }
+
+    /* ----- radar de fundo ----- */
+    desenhaRadarBG(t);
+
+    /* ----- pulso de luz percorrendo os perímetros ----- */
+    if(alfaLogo>.05 && dentro>2600 && (fase==="formar"||fase==="segurar")){
+      ctx.save();
+      ctx.globalAlpha=alfaLogo;
+      for(var a=0;a<perims.length;a++){
+        var per=perims[a];
+        var n=per.length;
+        var pos=((t*.00016+a*.33)%1)*n;
+        for(var k=0;k<16;k++){
+          var idx=Math.floor(pos-k+n*4)%n;
+          var pt=projeta(per[idx][0],per[idx][1]);
+          var al=(1-k/16)*.75;
+          ctx.fillStyle="rgba(255,238,180,"+al+")";
+          ctx.beginPath();ctx.arc(pt.x,pt.y,(2.3-k*.09)*pt.p,0,7);ctx.fill();
+        }
+        /* brilho na cabeça do pulso */
+        var cab=projeta(per[Math.floor(pos)%n][0],per[Math.floor(pos)%n][1]);
+        var gl=ctx.createRadialGradient(cab.x,cab.y,0,cab.x,cab.y,14);
+        gl.addColorStop(0,"rgba(255,240,200,.55)");
+        gl.addColorStop(1,"rgba(255,240,200,0)");
+        ctx.fillStyle=gl;
+        ctx.beginPath();ctx.arc(cab.x,cab.y,14,0,7);ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  if(reduz){
+    /* versão estática: logo montada, sem loop */
+    particulas.forEach(function(p){
+      p.x=CX+p.ax*ESC;p.y=CY+p.ay*ESC;
+    });
+    (function(){
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<particulas.length;i++){
+        var p=particulas[i];
+        ctx.fillStyle="rgba(232,185,59,.7)";
+        ctx.beginPath();ctx.arc(p.x,p.y,p.tam,0,7);ctx.fill();
+      }
+    })();
+  }else{
+    (function loop(t){desenha(t);requestAnimationFrame(loop);})(0);
+  }
+})();
+</script>
+
+</body>
+</html>
