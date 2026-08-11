@@ -247,15 +247,9 @@ footer a{color:var(--ouro);text-decoration:none}
   .cursor{display:none}
 }
 :focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:4px}
-
-
-
-
 </style>
 </head>
 <body>
-
-
 
 <canvas id="cena" aria-hidden="true"></canvas>
 <div class="veu" aria-hidden="true"></div>
@@ -272,7 +266,7 @@ footer a{color:var(--ouro);text-decoration:none}
   <div class="saud" id="saud">Olá! Você está no lançamento do BNI Relevo.</div>
   <p class="canal-excl" id="canalTexto"></p>
   <div class="hero-acoes" id="heroAcoes" style="opacity:0">
-    <a class="btn" href="https://wa.me/5531996073905?text=Ol%C3%A1!%20Estou%20no%20lan%C3%A7amento%20da%20Tr%C3%ADvia%20e%20quero%20falar%20com%20voc%C3%AAs." target="_blank" rel="noopener">
+    <a class="btn" href="https://wa.me/5531971045733?text=Ol%C3%A1!%20Estou%20no%20lan%C3%A7amento%20da%20Tr%C3%ADvia%20e%20quero%20falar%20com%20voc%C3%AAs." target="_blank" rel="noopener">
       Fale conosco
       <svg width="15" height="17" viewBox="0 0 30 34" aria-hidden="true"><path d="M3 3 L27 17 L3 31 Z" fill="currentColor"/></svg>
     </a>
@@ -283,7 +277,7 @@ footer a{color:var(--ouro);text-decoration:none}
 
 <section class="bloco">
   <div class="rotulo">Conexões</div>
-  <h2>É uma honra participar do <strong>BNI</strong> e construir conexões como esta. Algumas visitas marcam o início de <strong class="dourado">grandes histórias</strong>.</h2>
+  <h2>É uma honra participar do lançamento do <strong>BNI Relevo</strong> e construir conexões como esta. Algumas visitas marcam o início de <strong class="dourado">grandes histórias</strong>.</h2>
 </section>
 
 <div class="divisa" aria-hidden="true"></div>
@@ -314,7 +308,7 @@ footer a{color:var(--ouro);text-decoration:none}
 <section class="lista">
   <h2>As primeiras empresas da região já estão <span class="dourado">garantindo seu lugar</span>.</h2>
   <p>Deixe o seu registrado.</p>
-  <a class="btn" href="https://wa.me/5531996073905?text=Ol%C3%A1!%20Estive%20no%20evento%20do%20BNI%20e%20quero%20registrar%20minha%20empresa%20na%20lista%20de%20espera%20da%20Tr%C3%ADvia." target="_blank" rel="noopener">
+  <a class="btn" href="https://wa.me/5531971045733?text=Ol%C3%A1!%20Estive%20no%20evento%20do%20BNI%20e%20quero%20registrar%20minha%20empresa%20na%20lista%20de%20espera%20da%20Tr%C3%ADvia." target="_blank" rel="noopener">
     Fale conosco
     <svg width="15" height="17" viewBox="0 0 30 34" aria-hidden="true"><path d="M3 3 L27 17 L3 31 Z" fill="currentColor"/></svg>
   </a>
@@ -332,13 +326,10 @@ footer a{color:var(--ouro);text-decoration:none}
 </div>
 
 <footer>
-  <span class="marca-pe">Trí<span class="dourado">via</span></span> — Soluções digitais &nbsp;·&nbsp; WhatsApp <a href="https://wa.me/5531996073905" target="_blank" rel="noopener">(31) 99607-3905</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/trivia.tecnologia" target="_blank" rel="noopener">Instagram</a>
+  <span class="marca-pe">Trí<span class="dourado">via</span></span> — Soluções digitais &nbsp;·&nbsp; WhatsApp <a href="https://wa.me/5531971045733" target="_blank" rel="noopener">(31) 97104-5733</a> &nbsp;·&nbsp; <a href="https://www.instagram.com/trivia.tecnologia" target="_blank" rel="noopener">Instagram</a>
 </footer>
 
 <script>
-/* ============================================================
-   SEQUÊNCIA DE ENTRADA — a IA "reconhece" o visitante
-   ============================================================ */
 (function(){
   var reduz=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var hero=document.querySelector(".hero");
@@ -352,7 +343,6 @@ footer a{color:var(--ouro);text-decoration:none}
     return;
   }
 
-  /* guarda o HTML final e limpa para digitar */
   var saudFinal="Olá! Você está no lançamento do BNI Relevo.";
   var canalFinal="Este é um canal exclusivo. Apenas quem está aqui hoje tem acesso — e ele fica no ar apenas durante o evento.";
   var saud=document.getElementById("saud");
@@ -372,7 +362,6 @@ footer a{color:var(--ouro);text-decoration:none}
   saud.textContent="";
   canalEl.textContent="";
 
-
   var cursor=document.createElement("span");
   cursor.className="cursor";
 
@@ -388,7 +377,6 @@ footer a{color:var(--ouro);text-decoration:none}
     })();
   }
 
-  /* digita HTML preservando as tags (para o dourado do "via") */
   function digitaHTML(el,html,vel,cb){
     el.appendChild(cursor);
     var tmp=document.createElement("div");
@@ -442,7 +430,6 @@ footer a{color:var(--ouro);text-decoration:none}
 
 })();
 
-/* ===== Áreas acendendo em sequência ===== */
 (function(){
   var areas=document.querySelectorAll(".area");
   if(!areas.length)return;
@@ -458,7 +445,6 @@ footer a{color:var(--ouro);text-decoration:none}
   },1500);
 })();
 
-/* ===== Revelar blocos no scroll ===== */
 (function(){
   var itens=document.querySelectorAll(".bloco,.lista");
   if(!("IntersectionObserver" in window)){itens.forEach(function(p){p.classList.add("visivel");});return;}
@@ -470,9 +456,6 @@ footer a{color:var(--ouro);text-decoration:none}
   itens.forEach(function(p){obs.observe(p);});
 })();
 
-/* ============================================================
-   CENA — logo Trívia traçada em linhas + radar alternando
-   ============================================================ */
 (function(){
   var canvas=document.getElementById("cena");
   var ctx=canvas.getContext("2d");
@@ -490,8 +473,6 @@ footer a{color:var(--ouro);text-decoration:none}
   dimensiona();
   window.addEventListener("resize",dimensiona);
 
-  /* ---- geometria dos 3 triângulos aninhados ---- */
-  /* triângulo apontando pra direita, vértices unitários */
   function triVerts(s){
     return[
       [-0.50*s, -0.62*s],
@@ -502,7 +483,6 @@ footer a{color:var(--ouro);text-decoration:none}
   var escalas=[1.00, 0.64, 0.30];
   var tris=escalas.map(function(s){return triVerts(s);});
 
-  /* segmentos: cada aresta como [p0, p1] com comprimento normalizado */
   var segmentos=[];
   tris.forEach(function(v,ti){
     for(var a=0;a<3;a++){
@@ -510,26 +490,22 @@ footer a{color:var(--ouro);text-decoration:none}
       segmentos.push({p:p, q:q, ti:ti});
     }
   });
-  /* comprimento total de todos os segmentos */
   function dist(p,q){return Math.hypot(q[0]-p[0],q[1]-p[1]);}
   var lens=segmentos.map(function(seg){return dist(seg.p,seg.q);});
   var totalLen=lens.reduce(function(a,b){return a+b;},0);
 
-  /* ---- ciclo de cenas ---- */
   var FASES={tracar:3600, segurar:3800, dissolver:1800, radar:8000};
   var fase="tracar", faseT=0;
   var alfaLogo=0, alfaRadar=0;
   var rotY=0, rotX=0;
   var inicio=null;
 
-  /* ---- partículas de explosão ---- */
   var explodidas=[];
   var explodiu=false;
 
   function explode(){
     explodidas=[];
     explodiu=true;
-    /* coleta pontos ao longo das arestas da logo */
     escalas.forEach(function(sc){
       var v=triVerts(sc);
       for(var a=0;a<3;a++){
@@ -566,8 +542,6 @@ footer a{color:var(--ouro);text-decoration:none}
     }
   }
 
-
-  /* ---- radar de fundo ---- */
   var viasBG=[
     [[-1,.12],[-.5,.08],[0,0],[.5,-.04],[1,-.10]],
     [[-.6,-1],[-.42,-.4],[-.28,0],[-.2,.5],[-.1,1]],
@@ -581,7 +555,6 @@ footer a{color:var(--ouro);text-decoration:none}
     nosBG.push({x:Math.cos(aq)*rq,y:Math.sin(aq)*rq,f:Math.random()*6.28,det:0});
   }
 
-  /* ---- poeira de fundo ---- */
   var livres=[];
   function criaLivres(){
     livres=[];
@@ -596,7 +569,6 @@ footer a{color:var(--ouro);text-decoration:none}
   }
   criaLivres();
 
-  /* ---- interação ---- */
   var mx=-9999,my=-9999;
   window.addEventListener("mousemove",function(e){mx=e.clientX;my=e.clientY;},{passive:true});
   window.addEventListener("touchmove",function(e){if(e.touches[0]){mx=e.touches[0].clientX;my=e.touches[0].clientY;}},{passive:true});
@@ -610,7 +582,6 @@ footer a{color:var(--ouro);text-decoration:none}
     else{fase="tracar";}
   }
 
-  /* projeta ponto 2D com rotação 3D suave */
   function projeta(ax, ay){
     var x=ax, y=ay, z=0;
     var cy2=Math.cos(rotY), sy2=Math.sin(rotY);
@@ -625,18 +596,14 @@ footer a{color:var(--ouro);text-decoration:none}
     if(alfa<.01) return;
     ctx.save();
     ctx.globalAlpha=alfa;
-
-    /* respiração suave */
     var resp=1+Math.sin(t*.0014)*.018;
-
-    /* traçar progressivamente */
     var acum=0;
-    var traçado=prog*totalLen;
+    var tracado=prog*totalLen;
 
     segmentos.forEach(function(seg, si){
       var L=lens[si];
-      if(acum>=traçado){acum+=L;return;}
-      var frac=Math.min(1,(traçado-acum)/L);
+      if(acum>=tracado){acum+=L;return;}
+      var frac=Math.min(1,(tracado-acum)/L);
       acum+=L;
 
       var p0=projeta(seg.p[0]*resp, seg.p[1]*resp);
@@ -644,10 +611,7 @@ footer a{color:var(--ouro);text-decoration:none}
       var p1y=seg.p[1]+(seg.q[1]-seg.p[1])*frac;
       var p1=projeta(p1x*resp, p1y*resp);
 
-      /* espessura varia por triângulo: externo mais grosso */
       var lw=[5.5, 3.8, 2.4][seg.ti];
-
-      /* gradiente dourado ao longo da aresta */
       var grd=ctx.createLinearGradient(p0.x,p0.y,p1.x,p1.y);
       grd.addColorStop(0,"rgba(156,116,15,1)");
       grd.addColorStop(.45,"rgba(232,185,59,1)");
@@ -658,8 +622,6 @@ footer a{color:var(--ouro);text-decoration:none}
       ctx.lineWidth=lw*p0.p;
       ctx.lineCap="round";
       ctx.lineJoin="round";
-
-      /* brilho (glow) */
       ctx.shadowColor="rgba(232,185,59,.65)";
       ctx.shadowBlur=12;
 
@@ -669,14 +631,13 @@ footer a{color:var(--ouro);text-decoration:none}
       ctx.stroke();
     });
 
-    /* ponto de luz na ponta do traço */
     if(prog<1){
       var acum2=0;
       var ponta=null;
       for(var si=0;si<segmentos.length;si++){
         var L2=lens[si];
-        if(acum2+L2>=traçado){
-          var fr2=(traçado-acum2)/L2;
+        if(acum2+L2>=tracado){
+          var fr2=(tracado-acum2)/L2;
           var seg2=segmentos[si];
           var px=seg2.p[0]+(seg2.q[0]-seg2.p[0])*fr2;
           var py=seg2.p[1]+(seg2.q[1]-seg2.p[1])*fr2;
@@ -698,7 +659,6 @@ footer a{color:var(--ouro);text-decoration:none}
       }
     }
 
-    /* pulsos de luz percorrendo as arestas completas */
     if(prog>=1){
       var pulsT=(t*.00018)%1;
       var acum3=0;
@@ -707,7 +667,6 @@ footer a{color:var(--ouro);text-decoration:none}
         var seg3=segmentos[si];
         var segFrac=(acum3/totalLen);
         var segEnd=((acum3+L3)/totalLen);
-        /* posição do pulso nesse segmento */
         for(var pk=0;pk<3;pk++){
           var pp=((pulsT+pk/3)%1);
           if(pp>=segFrac && pp<segEnd){
@@ -794,7 +753,6 @@ footer a{color:var(--ouro);text-decoration:none}
     ctx.restore();
   }
 
-  /* ---- chuva de código ---- */
   var CHARS="01{}[]()<>=/;:+*#&$%λƒ∆.".split("");
   var colunas=[];var TAM_F=15;var TRILHA=14;
   function montaChuva(){
@@ -823,13 +781,11 @@ footer a{color:var(--ouro);text-decoration:none}
     }
   }
 
-
   function quadro(t){
     if(inicio===null){inicio=t;faseT=t;}
     var dentro=t-faseT;
     ctx.clearRect(0,0,W,H);
 
-    /* rotação lenta */
     rotY=Math.sin(t*.00022)*.45;
     rotX=Math.sin(t*.00018)*.12;
 
@@ -853,7 +809,6 @@ footer a{color:var(--ouro);text-decoration:none}
 
     desenhaChuva(t);
 
-    /* poeira */
     for(var i=0;i<livres.length;i++){
       var f=livres[i];f.x+=f.vx;f.y+=f.vy;
       if(f.x<-20)f.x=W+20;if(f.x>W+20)f.x=-20;
@@ -862,16 +817,11 @@ footer a{color:var(--ouro);text-decoration:none}
       ctx.beginPath();ctx.arc(f.x,f.y,f.z*1.4,0,7);ctx.fill();
     }
 
-    /* logo traçada */
     var prog=fase==="tracar"
       ? Math.min(1, dentro/FASES.tracar)
       : (fase==="dissolver" ? 1 : fase==="segurar" ? 1 : 0);
     desenhaLogo(t, prog, alfaLogo);
-
-    /* explosão de partículas */
     desenhaExplodidas();
-
-    /* radar */
     desenhaRadarBG(t);
   }
 
@@ -881,5 +831,6 @@ footer a{color:var(--ouro);text-decoration:none}
     (function loop(t){quadro(t);requestAnimationFrame(loop);})(0);
   }
 })();
-
 </script>
+</body>
+</html>
