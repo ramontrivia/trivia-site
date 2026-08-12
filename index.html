@@ -3,347 +3,747 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trívia — Tecnologia que responde</title>
+<title>Trívia — Soluções digitais</title>
+<meta name="description" content="A Trívia analisa a dor do seu negócio e entrega solução digital sob medida — IA, agentes, marketing, identidade e controle.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#050402;--bg2:#0c0a06;--panel:#11100b;--line:rgba(212,160,55,.16);
-    --txt:#f2efe6;--muted:#9a948a;--gold:#d4a037;--gold-lt:#f5d77a;--gold-dk:#a8742a;
-    --grad-gold:linear-gradient(135deg,#f5d77a 0%,#d4a037 45%,#a8742a 100%);
-    --glow:0 0 50px rgba(212,160,55,.4);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--txt);font-family:'Montserrat',sans-serif;overflow-x:hidden;line-height:1.55}
-  ::selection{background:var(--gold);color:#0a0700}
-  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-  .glowline{position:fixed;z-index:0;pointer-events:none;width:2px;height:120vh;background:linear-gradient(180deg,transparent,var(--gold),transparent);opacity:.25;filter:blur(2px);right:8%;top:-10vh;transform:rotate(8deg)}
-  .orb{position:fixed;border-radius:50%;filter:blur(120px);z-index:0;pointer-events:none}
-  .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,160,55,.35),transparent 70%);top:-180px;right:-140px}
-  .orb2{width:420px;height:420px;background:radial-gradient(circle,rgba(168,116,42,.25),transparent 70%);bottom:10%;left:-160px}
-  .wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 28px}
-  .mark{display:inline-flex;align-items:center;gap:12px}
-  .tri{width:34px;height:34px;position:relative;flex-shrink:0}
-  .tri svg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(212,160,55,.6))}
-  .logo-txt{font-weight:800;font-size:1.5rem;letter-spacing:.5px}
-  .logo-txt .a{color:#fff}.logo-txt .b{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rgba(5,4,2,.72);border-bottom:1px solid var(--line)}
-  .nav-in{display:flex;align-items:center;justify-content:space-between;height:74px}
-  .nav-links{display:flex;gap:32px;align-items:center}
-  .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:.2s}
-  .nav-links a:hover{color:var(--txt)}
-  .btn{background:var(--grad-gold);color:#0a0700;border:none;padding:12px 24px;border-radius:8px;font-family:'Montserrat';font-weight:700;font-size:.88rem;cursor:pointer;transition:.25s;text-decoration:none;display:inline-block}
-  .btn:hover{transform:translateY(-2px);box-shadow:var(--glow)}
-  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
-  .btn-ghost:hover{border-color:var(--gold);box-shadow:none;background:rgba(212,160,55,.06)}
-  @media(max-width:780px){.nav-links a:not(.btn){display:none}}
-  header{padding:96px 0 80px;position:relative}
-  .eyebrow{color:var(--gold);font-size:.78rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:24px;display:flex;align-items:center;gap:14px}
-  .eyebrow::after{content:"";width:54px;height:1px;background:var(--gold);opacity:.5}
-  h1{font-size:clamp(2.7rem,6.5vw,5rem);font-weight:800;line-height:1.02;letter-spacing:-1.5px;max-width:16ch}
-  h1 .g{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{color:var(--muted);font-size:1.18rem;max-width:50ch;margin:28px 0 40px;font-weight:400}
-  .sub b{color:var(--gold);font-weight:600}
-  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
-  .hero-stats{display:flex;gap:48px;margin-top:64px;flex-wrap:wrap}
-  .stat .num{font-size:2.1rem;font-weight:800;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat .lbl{color:var(--muted);font-size:.84rem}
-  .reveal{opacity:0;transform:translateY(26px);animation:reveal .85s forwards}
-  @keyframes reveal{to{opacity:1;transform:none}}
-  .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}
-  .hero-tri{position:absolute;right:2%;top:50%;transform:translateY(-50%);width:340px;height:340px;opacity:.9;z-index:1}
-  .hero-tri svg{width:100%;height:100%;filter:drop-shadow(0 0 40px rgba(212,160,55,.5));animation:float 6s ease-in-out infinite}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
-  @media(max-width:980px){.hero-tri{display:none}}
-  .chat-demo{margin-top:64px;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6)}
-  .chat-head{background:linear-gradient(90deg,#1a1408,#241c0a);padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
-  .chat-head .av{width:38px;height:38px;border-radius:50%;background:var(--grad-gold);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0700}
-  .chat-head .nm{font-weight:700;font-size:.95rem}.chat-head .on{font-size:.72rem;color:var(--gold)}
-  .chat-body{padding:20px;display:flex;flex-direction:column;gap:12px}
-  .msg{max-width:82%;padding:10px 14px;border-radius:13px;font-size:.89rem;animation:reveal .6s forwards;opacity:0}
-  .msg.them{background:#1c1810;border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
-  .msg.me{background:var(--grad-gold);color:#0a0700;border-bottom-right-radius:4px;align-self:flex-end;font-weight:500}
-  .m1{animation-delay:.6s}.m2{animation-delay:1.2s}.m3{animation-delay:1.9s}.m4{animation-delay:2.6s}
-  section{padding:96px 0}
-  h2{font-size:clamp(2rem,4.2vw,3rem);font-weight:800;letter-spacing:-1px;max-width:18ch;margin-bottom:18px;line-height:1.1}
-  h2 .g{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .lead{color:var(--muted);max-width:54ch;font-size:1.08rem}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:52px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:30px;transition:.3s;position:relative;overflow:hidden}
-  .card::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--grad-gold);transform:scaleX(0);transform-origin:left;transition:.35s}
-  .card:hover{transform:translateY(-6px);border-color:rgba(212,160,55,.35)}
-  .card:hover::before{transform:scaleX(1)}
-  .card .ico{width:50px;height:50px;border-radius:12px;background:rgba(212,160,55,.1);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-  .card .ico svg{width:24px;height:24px;stroke:var(--gold)}
-  .card h3{font-size:1.18rem;margin-bottom:9px}
-  .card p{color:var(--muted);font-size:.93rem}
-  .funnel-sec{background:linear-gradient(180deg,var(--bg),var(--bg2),var(--bg))}
-  .funnel{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:54px}
-  .fstep{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 28px;width:100%;max-width:680px;transition:.3s}
-  .fstep:hover{border-color:var(--gold);transform:scale(1.02)}
-  .fstep .n{font-family:'Cormorant Garamond';font-size:1.8rem;font-weight:600;color:var(--gold);width:32px}
-  .fstep .t{font-weight:700;font-size:1.05rem}
-  .fstep .d{color:var(--muted);font-size:.9rem}
-  .fstep:nth-child(2){max-width:600px}.fstep:nth-child(3){max-width:520px}.fstep:nth-child(4){max-width:440px}.fstep:nth-child(5){max-width:360px;background:linear-gradient(90deg,rgba(212,160,55,.15),rgba(168,116,42,.08));border-color:var(--gold)}
-  .stats-sec .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:52px}
-  .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px;text-align:center}
-  .stat-card .big{font-size:3.4rem;font-weight:900;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-  .stat-card p{color:var(--muted);font-size:.95rem;margin:14px 0 8px}
-  .stat-card .src{font-size:.76rem;color:var(--gold);opacity:.7}
-  .price-box{max-width:440px;margin:52px auto 0;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--gold);border-radius:20px;padding:42px;text-align:center;box-shadow:0 0 70px rgba(212,160,55,.12)}
-  .price-box .amt{font-size:3.6rem;font-weight:900;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .price-box .amt small{font-size:1rem;color:var(--muted);font-weight:400;-webkit-text-fill-color:var(--muted)}
-  .price-box ul{list-style:none;text-align:left;margin:26px 0;display:flex;flex-direction:column;gap:13px}
-  .price-box li{display:flex;gap:11px;color:var(--muted);font-size:.95rem;align-items:flex-start}
-  .price-box li b{color:var(--gold);font-weight:700;flex-shrink:0}
-  .price-note{font-size:.83rem;color:var(--muted);margin-top:10px}
-  .lead-sec{background:linear-gradient(180deg,transparent,rgba(212,160,55,.05))}
-  .form-box{max-width:520px;margin:42px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:38px}
-  .form-box label{display:block;font-size:.82rem;color:var(--muted);margin:16px 0 7px;font-weight:500}
-  .form-box input,.form-box select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px 14px;color:var(--txt);font-family:'Montserrat';font-size:.94rem}
-  .form-box input:focus,.form-box select:focus{outline:none;border-color:var(--gold)}
-  .form-box .btn{width:100%;margin-top:26px;padding:15px;font-size:.95rem}
-  .band{text-align:center;padding:80px 0;background:linear-gradient(180deg,var(--bg2),var(--bg))}
-  .band .tri{width:64px;height:64px;margin:0 auto 24px}
-  .band h3{font-size:clamp(1.6rem,3vw,2.3rem);font-weight:800;margin-bottom:10px}
-  .band .slogan{color:var(--gold);font-size:1rem;letter-spacing:3px;text-transform:uppercase;font-weight:600}
-  footer{border-top:1px solid var(--line);padding:46px 0;color:var(--muted);font-size:.86rem}
-  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:center}
-  .modal{position:fixed;inset:0;z-index:100;background:rgba(3,2,1,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
-  .modal.open{display:flex}
-  .modal-card{background:var(--panel);border:1px solid var(--gold);border-radius:18px;padding:42px;max-width:400px;width:100%;position:relative;animation:reveal .4s forwards;box-shadow:0 0 60px rgba(212,160,55,.2)}
-  .modal-card .x{position:absolute;top:18px;right:20px;color:var(--muted);cursor:pointer;font-size:1.5rem;background:none;border:none}
-  .modal-card h3{font-size:1.5rem;margin-bottom:6px}
-  .modal-card .mt{color:var(--muted);font-size:.9rem;margin-bottom:22px}
-  .modal-card label{display:block;font-size:.8rem;color:var(--muted);margin:14px 0 6px}
-  .modal-card input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px;color:var(--txt);font-family:'Montserrat'}
-  .modal-card input:focus{outline:none;border-color:var(--gold)}
-  .modal-card .btn{width:100%;margin-top:22px;padding:14px}
-  .hint{font-size:.76rem;color:var(--muted);margin-top:14px;text-align:center;opacity:.7}
-  .err{color:#e8705a;font-size:.84rem;margin-top:10px;display:none}
-  #dash{display:none;min-height:100vh}
-  .dash-nav{background:var(--panel);border-bottom:1px solid var(--line)}
-  .dash-nav .nav-in{height:64px}
-  .dash-grid{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px)}
-  .side{background:var(--bg2);border-right:1px solid var(--line);padding:26px 16px}
-  .side a{display:flex;align-items:center;gap:12px;color:var(--muted);text-decoration:none;padding:12px 14px;border-radius:9px;font-size:.92rem;margin-bottom:4px;cursor:pointer;transition:.2s}
-  .side a:hover,.side a.active{background:rgba(212,160,55,.1);color:var(--gold)}
-  .main{padding:36px}
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:22px}
-  .kpi .k{font-size:.82rem;color:var(--muted)}
-  .kpi .v{font-size:2rem;font-weight:800;margin-top:6px}
-  .kpi .v.up{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px}
-  .panel-box h4{margin-bottom:16px;font-size:1.05rem}
-  .row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:.92rem;gap:12px}
-  .row:last-child{border:none}
-  .pill{font-size:.72rem;padding:4px 11px;border-radius:100px;white-space:nowrap;font-weight:600}
-  .pill.q{background:rgba(212,160,55,.15);color:var(--gold-lt)}
-  .pill.m{background:rgba(200,140,60,.14);color:#e0a558}
-  .pill.f{background:rgba(154,148,138,.15);color:var(--muted)}
-  .placeholder{color:var(--muted);font-size:.88rem;font-style:italic}
-  @media(max-width:780px){.dash-grid{grid-template-columns:1fr}.side{display:none}}
+:root{
+  --preto:#050505;
+  --ouro:#e8b93b;
+  --ouro-claro:#f8dd85;
+  --ouro-escuro:#9c740f;
+  --branco:#f7f5f0;
+  --cinza:#8b857d;
+  --cinza-claro:#c4bfb8;
+  --card-bg:rgba(255,255,255,0.032);
+  --card-borda:rgba(232,185,59,0.13);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--preto);
+  color:var(--branco);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+h1,h2,h3,.wordmark,.btn{font-family:'Sora',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+.dourado{
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 40%,var(--ouro-claro) 55%,var(--ouro) 70%,var(--ouro-escuro));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ===== CANVAS ===== */
+#cena{position:fixed;inset:0;z-index:0;pointer-events:none}
+.veu{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 100% 60% at 50% 110%,rgba(5,5,5,.97),transparent 60%);
+}
+.conteudo{position:relative;z-index:2}
+
+/* ===== NAV ===== */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 6vw;
+  position:sticky;top:0;z-index:100;
+  background:rgba(5,5,5,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(232,185,59,.08);
+}
+.wordmark{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;color:var(--branco);text-decoration:none}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:.82rem;letter-spacing:.06em;color:var(--cinza);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--ouro-claro)}
+.nav-cta{
+  font-family:'Sora',sans-serif;font-size:.8rem;font-weight:700;
+  padding:10px 22px;border-radius:10px;
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 50%,var(--ouro-claro));
+  color:var(--preto);text-decoration:none;
+  transition:transform .2s,box-shadow .2s;
+}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(232,185,59,.3)}
+.selo-nav{
+  font-size:.62rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ouro);display:flex;align-items:center;gap:7px;
+}
+.selo-nav::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--ouro);box-shadow:0 0 8px var(--ouro);
+  animation:pulsa 2.2s ease-in-out infinite;
+}
+@keyframes pulsa{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:95vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:14vh 6vw 8vh;
+}
+.hero-tag{
+  font-size:.65rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--ouro);margin-bottom:28px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-tag::before,.hero-tag::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(232,185,59,.4),transparent);
+  width:40px;
+}
+.hero h1{
+  font-size:clamp(2.4rem,7vw,5rem);
+  font-weight:800;line-height:1.08;letter-spacing:-.04em;
+  max-width:14ch;margin:0 auto;
+}
+.hero h1 .fino{font-weight:300}
+.hero-sub{
+  margin-top:24px;
+  font-size:clamp(1rem,2.2vw,1.18rem);
+  font-weight:300;color:var(--cinza-claro);
+  max-width:36rem;line-height:1.7;
+}
+.hero-acoes{
+  margin-top:44px;
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+}
+.btn-prim{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;
+  padding:18px 40px;border-radius:14px;
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 45%,var(--ouro-claro));
+  color:var(--preto);text-decoration:none;
+  box-shadow:0 0 50px rgba(232,185,59,.2),0 4px 20px rgba(0,0,0,.5);
+  transition:transform .22s,box-shadow .22s;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn-prim:hover{transform:translateY(-2px);box-shadow:0 0 70px rgba(232,185,59,.38),0 8px 28px rgba(0,0,0,.5)}
+.btn-sec{
+  font-family:'Sora',sans-serif;font-weight:600;font-size:.9rem;
+  padding:18px 36px;border-radius:14px;
+  border:1px solid rgba(232,185,59,.3);
+  color:var(--ouro-claro);text-decoration:none;
+  transition:border-color .2s,background .2s;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn-sec:hover{border-color:rgba(232,185,59,.6);background:rgba(232,185,59,.06)}
+
+.hero-numeros{
+  margin-top:64px;
+  display:flex;gap:clamp(32px,6vw,80px);
+  flex-wrap:wrap;justify-content:center;
+}
+.num-item{text-align:center}
+.num-val{
+  font-family:'Sora',sans-serif;font-size:clamp(1.6rem,3.5vw,2.4rem);
+  font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(115deg,var(--ouro),var(--ouro-claro));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.num-label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cinza);margin-top:4px}
+
+/* ===== DIVISA ===== */
+.divisa{
+  width:1px;height:80px;margin:0 auto;
+  background:linear-gradient(180deg,transparent,rgba(232,185,59,.35),transparent);
+}
+
+/* ===== SECOES ===== */
+section{padding:10vh 6vw}
+.sec-tag{
+  font-size:.64rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--ouro);margin-bottom:18px;display:block;
+}
+.sec-titulo{
+  font-size:clamp(1.6rem,4vw,2.8rem);
+  font-weight:300;line-height:1.3;letter-spacing:-.02em;
+  max-width:22ch;
+}
+.sec-titulo strong{font-weight:700}
+.sec-apoio{
+  margin-top:16px;font-size:clamp(.95rem,1.8vw,1.05rem);
+  font-weight:300;color:var(--cinza);max-width:38rem;line-height:1.75;
+}
+
+/* ===== DIAGNOSTICO ===== */
+.diag{
+  display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center;
+  max-width:1100px;margin:0 auto;
+}
+.diag-passos{
+  margin-top:48px;
+  display:flex;flex-direction:column;gap:0;
+}
+.passo{
+  display:flex;gap:20px;align-items:flex-start;
+  padding:22px 0;
+  border-bottom:1px solid rgba(232,185,59,.08);
+  opacity:0;transform:translateX(-20px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.passo.visivel{opacity:1;transform:translateX(0)}
+.passo:last-child{border-bottom:none}
+.passo-num{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  color:var(--ouro);min-width:28px;margin-top:3px;letter-spacing:.1em;
+}
+.passo-titulo{font-family:'Sora',sans-serif;font-size:1rem;font-weight:600;margin-bottom:6px}
+.passo-desc{font-size:.9rem;color:var(--cinza);line-height:1.65}
+
+.diag-visual{
+  position:relative;
+  background:var(--card-bg);
+  border:1px solid var(--card-borda);
+  border-radius:24px;
+  padding:36px;
+  overflow:hidden;
+}
+.diag-visual::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,185,59,.06),transparent 70%);
+}
+.diag-cite{
+  font-size:clamp(1.1rem,2.2vw,1.4rem);
+  font-weight:300;line-height:1.6;
+  color:var(--branco);font-style:italic;
+  position:relative;z-index:1;
+}
+.diag-cite::before{
+  content:"\201C";
+  font-family:'Sora',sans-serif;font-size:5rem;font-weight:800;
+  color:rgba(232,185,59,.18);
+  position:absolute;top:-20px;left:-10px;line-height:1;
+}
+.diag-autor{
+  margin-top:28px;font-size:.78rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ouro);
+  display:flex;align-items:center;gap:10px;
+  position:relative;z-index:1;
+}
+.diag-autor::before{content:"";width:28px;height:1px;background:var(--ouro)}
+
+/* ===== FRENTES ===== */
+.frentes-grid{
+  margin-top:56px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+  max-width:1100px;margin-left:auto;margin-right:auto;
+}
+.frente-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-borda);
+  border-radius:20px;
+  padding:32px 28px;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(24px);
+  transition:opacity .7s ease,transform .7s ease,border-color .3s,box-shadow .3s;
+}
+.frente-card.visivel{opacity:1;transform:translateY(0)}
+.frente-card:hover{
+  border-color:rgba(232,185,59,.3);
+  box-shadow:0 0 40px rgba(232,185,59,.08);
+}
+.frente-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--ouro),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.frente-card:hover::before{opacity:1}
+.frente-icone{
+  font-size:2rem;margin-bottom:20px;
+  display:block;
+}
+.frente-nome{
+  font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;
+  margin-bottom:10px;color:var(--branco);
+}
+.frente-desc{font-size:.88rem;color:var(--cinza);line-height:1.7;margin-bottom:18px}
+.frente-lista{list-style:none;display:flex;flex-direction:column;gap:7px}
+.frente-lista li{
+  font-size:.8rem;color:var(--cinza-claro);
+  display:flex;align-items:center;gap:8px;
+}
+.frente-lista li::before{
+  content:"";width:4px;height:4px;border-radius:50%;
+  background:var(--ouro);flex-shrink:0;
+}
+
+/* ===== POR QUE AGORA ===== */
+.agora{
+  max-width:800px;margin:0 auto;text-align:center;
+}
+.agora .sec-titulo{max-width:none;margin:0 auto}
+.agora .sec-apoio{margin:16px auto 0}
+.agora-cards{
+  margin-top:48px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;text-align:left;
+}
+.agora-card{
+  background:var(--card-bg);border:1px solid var(--card-borda);
+  border-radius:16px;padding:24px;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.agora-card.visivel{opacity:1;transform:translateY(0)}
+.agora-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:2.2rem;font-weight:500;
+  background:linear-gradient(115deg,var(--ouro),var(--ouro-claro));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:12px;
+}
+.agora-txt{font-size:.88rem;color:var(--cinza);line-height:1.65}
+.agora-fonte{
+  display:block;font-size:.68rem;letter-spacing:.1em;
+  color:rgba(139,133,125,.5);margin-top:8px;
+}
+
+/* ===== CONTATO ===== */
+.contato{
+  max-width:640px;margin:0 auto;text-align:center;
+}
+.contato .sec-titulo{max-width:none;margin:0 auto 8px}
+.contato-form{
+  margin-top:40px;
+  display:flex;flex-direction:column;gap:14px;
+  text-align:left;
+}
+.contato-form input,
+.contato-form select,
+.contato-form textarea{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(232,185,59,.14);
+  border-radius:12px;
+  padding:15px 18px;
+  color:var(--branco);
+  font-family:'Inter',sans-serif;font-size:.93rem;
+  outline:none;width:100%;
+  transition:border-color .2s;
+}
+.contato-form input::placeholder,
+.contato-form textarea::placeholder{color:var(--cinza)}
+.contato-form select option{background:#1a1a1a}
+.contato-form input:focus,
+.contato-form select:focus,
+.contato-form textarea:focus{border-color:rgba(232,185,59,.45)}
+.contato-form textarea{resize:vertical;min-height:100px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn-form{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;
+  padding:18px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(115deg,var(--ouro-escuro),var(--ouro) 45%,var(--ouro-claro));
+  color:var(--preto);width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-form:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(232,185,59,.3)}
+.contato-ou{
+  margin:20px 0 0;font-size:.8rem;color:var(--cinza);text-align:center;
+}
+.link-wa{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--ouro-claro);text-decoration:none;font-size:.88rem;font-weight:500;
+  margin-top:14px;padding:12px 24px;border-radius:999px;
+  border:1px solid rgba(232,185,59,.25);
+  transition:border-color .2s,background .2s;
+}
+.link-wa:hover{border-color:rgba(232,185,59,.5);background:rgba(232,185,59,.06)}
+
+/* ===== FOOTER ===== */
+footer{
+  padding:40px 6vw;text-align:center;
+  border-top:1px solid rgba(255,255,255,.05);
+  color:var(--cinza);font-size:.78rem;letter-spacing:.04em;
+}
+footer .marca-pe{font-family:'Sora',sans-serif;font-weight:700;color:var(--branco)}
+footer a{color:var(--ouro);text-decoration:none}
+footer .sep{margin:0 10px;opacity:.3}
+
+/* ===== REVEAL ===== */
+.reveal{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .85s ease,transform .85s ease;
+}
+.reveal.visivel{opacity:1;transform:translateY(0)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .diag{grid-template-columns:1fr}
+  .diag-visual{display:none}
+  .form-row{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.frente-card,.passo,.agora-card{opacity:1;transform:none}
+}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:4px}
 </style>
 </head>
 <body>
-<div class="grain"></div><div class="glowline"></div><div class="orb orb1"></div><div class="orb orb2"></div>
-<svg width="0" height="0" style="position:absolute"><defs>
-  <linearGradient id="goldgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5d77a"/><stop offset="50%" stop-color="#d4a037"/><stop offset="100%" stop-color="#a8742a"/></linearGradient>
-  <symbol id="trimark" viewBox="0 0 100 100">
-    <polygon points="28,18 82,50 28,82" fill="none" stroke="url(#goldgrad)" stroke-width="5" stroke-linejoin="round"/>
-    <polygon points="38,32 64,50 38,68" fill="none" stroke="url(#goldgrad)" stroke-width="4" stroke-linejoin="round"/>
-    <polygon points="46,42 54,50 46,58" fill="url(#goldgrad)"/>
-  </symbol>
-</defs></svg>
 
-<div id="site">
-  <nav><div class="wrap nav-in">
-    <div class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></div>
-    <div class="nav-links">
-      <a href="#produto">Produto</a><a href="#funil">Como funciona</a><a href="#numeros">Resultados</a><a href="#preco">Preço</a>
-      <a href="painel.html" class="btn btn-ghost">Entrar</a>
-    </div>
-  </div></nav>
+<canvas id="cena" aria-hidden="true"></canvas>
+<div class="veu" aria-hidden="true"></div>
 
-  <header><div class="wrap">
-    <div class="eyebrow reveal d1">Tecnologia que responde</div>
-    <h1 class="reveal d2">Não é só atendimento. <span class="g">É um funil trabalhando por você.</span></h1>
-    <p class="sub reveal d3">A Trívia transforma seu WhatsApp em um atendimento inteligente que <b>responde na hora</b>, <b>conduz a conversa</b> e <b>gera oportunidades</b> — sem parecer robô, sem você fazer nada.</p>
-    <div class="hero-cta reveal d4"><a href="#contato" class="btn">Quero pra minha empresa</a><a href="#funil" class="btn btn-ghost">Ver como funciona</a></div>
-    <div class="hero-stats reveal d5">
-      <div class="stat"><div class="num">24h</div><div class="lbl">presença contínua</div></div>
-      <div class="stat"><div class="num">&lt;5s</div><div class="lbl">tempo de resposta</div></div>
-      <div class="stat"><div class="num">2,7x</div><div class="lbl">mais chances de negócio</div></div>
-    </div>
-    <div class="chat-demo reveal d5">
-      <div class="chat-head"><div class="av">M</div><div><div class="nm">Mel · Trívia</div><div class="on">● online agora</div></div></div>
-      <div class="chat-body">
-        <div class="msg them m1">Oi! Que bom te ver por aqui 😊 Me conta, o que você procura hoje?</div>
-        <div class="msg me m2">Queria agendar uma avaliação pra sexta</div>
-        <div class="msg them m3">Perfeito! Sexta tenho 14h e 16h30. Qual encaixa melhor?</div>
-        <div class="msg me m4">16h30 tá ótimo</div>
-      </div>
-    </div>
-  </div><div class="hero-tri"><svg><use href="#trimark"/></svg></div></header>
+<div class="conteudo">
 
-  <section id="produto"><div class="wrap">
-    <div class="eyebrow">Estratégia</div>
-    <h2>Atendimento não é sorte. É <span class="g">estratégia, tecnologia e processo.</span></h2>
-    <p class="lead">Conectamos tecnologia e estratégia para que sua empresa esteja sempre um passo à frente. Cada módulo se ativa conforme você precisa.</p>
-    <div class="grid">
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><h3>Resposta rápida</h3><p>O cliente não espera. A Trívia responde na hora, a qualquer hora, todos os dias.</p></div>
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Automação</h3><p>Atende, agenda, organiza e dá sequência — tudo automático, dentro de um número só.</p></div>
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg></div><h3>Organização</h3><p>Cada conversa, lead e agendamento no lugar certo. Nada se perde, nada esquece.</p></div>
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></div><h3>Inteligência comercial</h3><p>Classifica leads por temperatura, reativa quem sumiu e avisa quando está quente.</p></div>
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l3.75 3.75L21.75 6M21.75 6h-4.5m4.5 0v4.5"/></svg></div><h3>Conversão</h3><p>Conduz a conversa com estratégia até virar venda. Cada interação vira progresso.</p></div>
-      <div class="card"><div class="ico"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><h3>Painel & relatórios</h3><p>Veja conversas, leads e métricas em tempo real, aqui mesmo na área do cliente.</p></div>
-    </div>
-  </div></section>
+<!-- NAV -->
+<nav>
+  <a class="wordmark" href="#topo">Trí<span class="dourado">via</span></a>
+  <ul class="nav-links">
+    <li><a href="#solucoes">Soluções</a></li>
+    <li><a href="#diagnostico">Como funciona</a></li>
+    <li><a href="#agora">Por que agora</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a class="nav-cta" href="#contato">Quero um diagnóstico</a>
+</nav>
 
-  <section id="funil" class="funnel-sec"><div class="wrap" style="text-align:center">
-    <div class="eyebrow" style="justify-content:center">Atendimento inteligente</div>
-    <h2 style="margin:0 auto">Conexão gera relacionamento. <span class="g">Relacionamento gera resultado.</span></h2>
-    <p class="lead" style="margin:0 auto">Cada conversa percorre um caminho pensado para transformar interesse em venda.</p>
-    <div class="funnel">
-      <div class="fstep"><span class="n">01</span><div><div class="t">Atrai</div><div class="d">Capta quem chega e desperta o interesse certo.</div></div></div>
-      <div class="fstep"><span class="n">02</span><div><div class="t">Entende</div><div class="d">Qualifica e descobre o que o cliente realmente quer.</div></div></div>
-      <div class="fstep"><span class="n">03</span><div><div class="t">Aquece</div><div class="d">Nutre o relacionamento no timing certo.</div></div></div>
-      <div class="fstep"><span class="n">04</span><div><div class="t">Direciona</div><div class="d">Conduz a conversa com estratégia rumo à decisão.</div></div></div>
-      <div class="fstep"><span class="n">05</span><div><div class="t">Converte</div><div class="d">Transforma a conversa em venda e resultado real.</div></div></div>
-    </div>
-  </div></section>
-
-  <section id="numeros" class="stats-sec"><div class="wrap" style="text-align:center">
-    <div class="eyebrow" style="justify-content:center">Resultados</div>
-    <h2 style="margin:0 auto">Resultados comprovados <span class="g">estatisticamente.</span></h2>
-    <p class="lead" style="margin:0 auto">Dados de mercado mostram como atendimento inteligente impacta diretamente as oportunidades de negócio.</p>
-    <div class="grid3">
-      <div class="stat-card"><div class="big">79%</div><p>dos consumidores preferem falar com empresas que respondem rapidamente.</p><div class="src">Fonte: HubSpot</div></div>
-      <div class="stat-card"><div class="big">70%</div><p>das decisões de compra são influenciadas pela qualidade do atendimento.</p><div class="src">Fonte: PwC</div></div>
-      <div class="stat-card"><div class="big">90%</div><p>dos consumidores consideram o atendimento decisivo para escolher uma marca.</p><div class="src">Fonte: Microsoft</div></div>
-    </div>
-  </div></section>
-
-  <section id="preco"><div class="wrap" style="text-align:center">
-    <div class="eyebrow" style="justify-content:center">Investimento</div>
-    <h2 style="margin:0 auto">Começa simples. <span class="g">Cresce com você.</span></h2>
-    <div class="price-box">
-      <div class="amt">R$99<small>/mês</small></div>
-      <p style="color:var(--muted);margin-top:6px">plano base — atendimento inteligente no WhatsApp</p>
-      <ul>
-        <li><b>&rarr;</b> Inteligência conversacional 24/7</li>
-        <li><b>&rarr;</b> Memória e contexto do cliente</li>
-        <li><b>&rarr;</b> Acesso ao painel e relatórios</li>
-        <li><b>&rarr;</b> Suporte na configuração</li>
-      </ul>
-      <a href="#contato" class="btn" style="width:100%;padding:15px">Começar agora</a>
-      <p class="price-note">Módulos como agendamento, funil e disparos são adicionais — a gente conversa pra montar o ideal pro seu negócio.</p>
-    </div>
-  </div></section>
-
-  <section id="contato" class="lead-sec"><div class="wrap" style="text-align:center">
-    <div class="eyebrow" style="justify-content:center">Fala com a gente</div>
-    <h2 style="margin:0 auto">Sua empresa responde… <span class="g">ou apenas demora menos?</span></h2>
-    <p class="lead" style="margin:0 auto">Deixa seus dados e a gente continua a conversa direto no WhatsApp.</p>
-    <div class="form-box">
-      <label>Seu nome</label><input id="f-nome" placeholder="Como podemos te chamar?">
-      <label>WhatsApp</label><input id="f-fone" placeholder="(00) 00000-0000">
-      <label>Tipo de negócio</label>
-      <select id="f-tipo"><option>Salão / Estética</option><option>Clínica / Saúde</option><option>Comércio / Varejo</option><option>Indústria / Fábrica</option><option>Outro</option></select>
-      <button class="btn" onclick="enviarLead()">Falar no WhatsApp</button>
-    </div>
-  </div></section>
-
-  <div class="band"><div class="wrap">
-    <div class="tri"><svg><use href="#trimark"/></svg></div>
-    <h3>Tecnologia que responde.</h3>
-    <div class="slogan">Inteligência que conduz</div>
-  </div></div>
-
-  <footer><div class="wrap foot-in">
-    <div class="mark"><span class="tri" style="width:26px;height:26px"><svg><use href="#trimark"/></svg></span><span class="logo-txt" style="font-size:1.2rem"><span class="a">Trí</span><span class="b">via</span></span></div>
-    <div>© 2026 Trívia Tecnologia · WhatsApp (31) 99607-3905 · <a href="privacidade.html" style="color:var(--gold);text-decoration:none">Política de Privacidade</a><br><span style="font-size:.8rem;opacity:.8">GREYZIANE DEMORES DA SILVA · CNPJ 49.394.314/0001-05</span></div>
-  </div></footer>
-</div>
-
-<div class="modal" id="loginModal"><div class="modal-card">
-  <button class="x" onclick="closeLogin()">×</button>
-  <h3>Área do cliente</h3><p class="mt">Acesse seu painel de atendimento e relatórios.</p>
-  <label>E-mail</label><input id="l-email" type="email" placeholder="voce@empresa.com">
-  <label>Senha</label><input id="l-senha" type="password" placeholder="••••••••">
-  <button class="btn" onclick="fazerLogin()">Entrar</button>
-  <p class="err" id="l-err">E-mail ou senha incorretos.</p>
-  <p class="hint">demo: cliente@trivia.com / trivia123</p>
-</div></div>
-
-<div id="dash">
-  <nav class="dash-nav"><div class="wrap nav-in">
-    <div class="mark"><span class="tri"><svg><use href="#trimark"/></svg></span><span class="logo-txt"><span class="a">Trí</span><span class="b">via</span></span></div>
-    <div class="nav-links"><span style="color:var(--muted);font-size:.9rem">Salão Exemplo</span><a href="#" onclick="logout();return false" class="btn btn-ghost">Sair</a></div>
-  </div></nav>
-  <div class="dash-grid">
-    <aside class="side">
-      <a class="active" onclick="goTab(this,'tab-visao')">Visão geral</a>
-      <a onclick="goTab(this,'tab-conversas')">Conversas</a>
-      <a onclick="goTab(this,'tab-leads')">Leads & funil</a>
-      <a onclick="goTab(this,'tab-relatorios')">Relatórios</a>
-      <a onclick="goTab(this,'tab-config')">Configurações</a>
-    </aside>
-    <main class="main">
-      <div id="tab-visao" class="tab">
-        <h2 style="font-size:1.6rem;margin-bottom:24px">Visão geral</h2>
-        <div class="kpis">
-          <div class="kpi"><div class="k">Conversas hoje</div><div class="v up">47</div></div>
-          <div class="kpi"><div class="k">Leads quentes</div><div class="v">8</div></div>
-          <div class="kpi"><div class="k">Agendamentos</div><div class="v">12</div></div>
-          <div class="kpi"><div class="k">Taxa de resposta</div><div class="v up">98%</div></div>
-        </div>
-        <div class="panel-box"><h4>Últimas conversas</h4>
-          <div class="row"><span>Maria Silva — "queria remarcar pra quinta"</span><span class="pill q">quente</span></div>
-          <div class="row"><span>João Pereira — "qual o valor do pacote?"</span><span class="pill m">morno</span></div>
-          <div class="row"><span>Ana Costa — "vi o anúncio de vocês"</span><span class="pill f">frio</span></div>
-        </div>
-      </div>
-      <div id="tab-conversas" class="tab" style="display:none"><h2 style="font-size:1.6rem;margin-bottom:24px">Conversas</h2><div class="panel-box"><p class="placeholder">Aqui entram as conversas em tempo real, puxadas do backend por company_id. Pronto pra plugar na API.</p></div></div>
-      <div id="tab-leads" class="tab" style="display:none"><h2 style="font-size:1.6rem;margin-bottom:24px">Leads & funil</h2><div class="panel-box"><h4>Funil por temperatura</h4>
-        <div class="row"><span>Quentes — prontos pra fechar</span><span class="pill q">8</span></div>
-        <div class="row"><span>Mornos — em negociação</span><span class="pill m">15</span></div>
-        <div class="row"><span>Frios — para reativar</span><span class="pill f">34</span></div>
-      </div></div>
-      <div id="tab-relatorios" class="tab" style="display:none"><h2 style="font-size:1.6rem;margin-bottom:24px">Relatórios</h2><div class="panel-box"><p class="placeholder">Gráficos de volume, conversão e horários de pico. Conecta na tabela de mensagens do Supabase.</p></div></div>
-      <div id="tab-config" class="tab" style="display:none"><h2 style="font-size:1.6rem;margin-bottom:24px">Configurações</h2><div class="panel-box"><p class="placeholder">Tom de voz, horário de funcionamento, mensagens e integrações.</p></div></div>
-    </main>
+<!-- HERO -->
+<header class="hero" id="topo">
+  <div class="hero-tag">Agência de soluções digitais</div>
+  <h1>
+    <span class="fino">Tecnologia que</span><br>
+    <span class="dourado">resolve</span><br>
+    <span class="fino">de verdade.</span>
+  </h1>
+  <p class="hero-sub">
+    A Trívia analisa a dor do seu negócio e entrega solução digital sob medida —
+    inteligência artificial, automação, marketing e identidade, tudo integrado.
+  </p>
+  <div class="hero-acoes">
+    <a class="btn-prim" href="#contato">
+      Quero um diagnóstico gratuito
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <a class="btn-sec" href="#solucoes">
+      Ver soluções
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </a>
   </div>
+  <div class="hero-numeros">
+    <div class="num-item">
+      <div class="num-val">4</div>
+      <div class="num-label">frentes de solução</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">24h</div>
+      <div class="num-label">agentes operando</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">1</div>
+      <div class="num-label">diagnóstico. sem enrolação</div>
+    </div>
+  </div>
+</header>
+
+<div class="divisa"></div>
+
+<!-- DIAGNOSTICO -->
+<section id="diagnostico" style="max-width:1100px;margin:0 auto">
+  <div class="diag">
+    <div>
+      <span class="sec-tag">Como funciona</span>
+      <h2 class="sec-titulo">A gente senta, entende a dor e <strong>resolve com tecnologia</strong>.</h2>
+      <p class="sec-apoio">Não vendemos pacote pronto. Diagnosticamos o negócio, identificamos onde a empresa perde tempo ou dinheiro, e montamos a solução certa pra aquele caso.</p>
+      <div class="diag-passos">
+        <div class="passo">
+          <span class="passo-num">01</span>
+          <div>
+            <div class="passo-titulo">Diagnóstico</div>
+            <div class="passo-desc">A gente ouve o negócio, entende o fluxo e identifica onde está a maior dor — seja no atendimento, no controle, na imagem ou no processo.</div>
+          </div>
+        </div>
+        <div class="passo">
+          <span class="passo-num">02</span>
+          <div>
+            <div class="passo-titulo">Solução sob medida</div>
+            <div class="passo-desc">Nada de produto de prateleira. A solução é montada pro escopo daquele negócio, com as ferramentas que fazem sentido pra ele.</div>
+          </div>
+        </div>
+        <div class="passo">
+          <span class="passo-num">03</span>
+          <div>
+            <div class="passo-titulo">Implantação</div>
+            <div class="passo-desc">A Trívia implanta, configura e acompanha. O empresário não precisa entender de tecnologia — só precisa ver funcionando.</div>
+          </div>
+        </div>
+        <div class="passo">
+          <span class="passo-num">04</span>
+          <div>
+            <div class="passo-titulo">Resultado</div>
+            <div class="passo-desc">Menos retrabalho, mais controle, presença profissional e inteligência operando por você — todos os dias, em todos os pontos do negócio.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="diag-visual">
+      <p class="diag-cite">O empresário não precisa entender de tecnologia. Ele precisa de resultado. A nossa função é fazer a ponte entre os dois.</p>
+      <div class="diag-autor">Trívia</div>
+      <div style="margin-top:36px;border-top:1px solid rgba(232,185,59,.1);padding-top:28px">
+        <div style="font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ouro);margin-bottom:16px">O que a gente resolve</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Atendimento lento</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Caixa sem controle</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Marca fraca</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Processo manual</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Instagram parado</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Estoque bagunçado</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Sem relatório</span>
+          <span style="font-size:.75rem;padding:5px 12px;border:1px solid rgba(232,185,59,.2);border-radius:999px;color:var(--cinza-claro)">Anúncio sem retorno</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divisa"></div>
+
+<!-- SOLUCOES -->
+<section id="solucoes" style="max-width:1100px;margin:0 auto">
+  <div class="reveal">
+    <span class="sec-tag">Soluções</span>
+    <h2 class="sec-titulo">Quatro frentes. <strong>Um lugar só.</strong></h2>
+    <p class="sec-apoio">A maioria do mercado entrega uma coisa — ou o post, ou o sistema, ou o vídeo. A Trívia entrega o conjunto, porque sabe como as peças se conectam.</p>
+  </div>
+  <div class="frentes-grid" style="margin-top:48px">
+
+    <div class="frente-card">
+      <span class="frente-icone">🤖</span>
+      <div class="frente-nome">IA e Agentes Digitais</div>
+      <p class="frente-desc">Funcionários virtuais que trabalham 24 horas, executam tarefas reais e não precisam de gestão.</p>
+      <ul class="frente-lista">
+        <li>Atendimento inteligente no WhatsApp</li>
+        <li>Agentes de vendas e suporte</li>
+        <li>Automação de processos repetitivos</li>
+        <li>CRM e funil de vendas com IA</li>
+        <li>Integração entre sistemas</li>
+        <li>Agendamento e orçamento automático</li>
+      </ul>
+    </div>
+
+    <div class="frente-card">
+      <span class="frente-icone">📊</span>
+      <div class="frente-nome">Controle e Gestão</div>
+      <p class="frente-desc">Enxergar o negócio por dentro. Decisão com dado, não com sensação.</p>
+      <ul class="frente-lista">
+        <li>Fluxo de caixa</li>
+        <li>Controle de estoque e almoxarifado</li>
+        <li>Painéis e dashboards de indicadores</li>
+        <li>Relatórios gerenciais</li>
+        <li>Automação de planilhas</li>
+        <li>Organização de dados operacionais</li>
+      </ul>
+    </div>
+
+    <div class="frente-card">
+      <span class="frente-icone">📣</span>
+      <div class="frente-nome">Marketing Digital</div>
+      <p class="frente-desc">Presença que traz cliente — não só curtida. Do anúncio ao cartão de visita.</p>
+      <ul class="frente-lista">
+        <li>Gestão de tráfego pago</li>
+        <li>Redes sociais e criação de conteúdo</li>
+        <li>Identidade visual completa</li>
+        <li>Material impresso (cartão, panfleto, banner)</li>
+        <li>Site e landing page</li>
+        <li>Presença no Google</li>
+      </ul>
+    </div>
+
+    <div class="frente-card">
+      <span class="frente-icone">🎬</span>
+      <div class="frente-nome">Produção Audiovisual</div>
+      <p class="frente-desc">Imagem que muda a percepção. Do produto à obra — do chão ao drone.</p>
+      <ul class="frente-lista">
+        <li>Filmagem profissional</li>
+        <li>Voo de drone</li>
+        <li>Modelagem e conteúdo 3D</li>
+        <li>Fotografia de produto e ambiente</li>
+        <li>Edição e pós-produção</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="divisa"></div>
+
+<!-- POR QUE AGORA -->
+<section id="agora">
+  <div class="agora reveal">
+    <span class="sec-tag">Por que agora</span>
+    <h2 class="sec-titulo">IA está entrando nas empresas. <strong class="dourado">As que não entram ficam pra trás.</strong></h2>
+    <p class="sec-apoio">Não é tendência futura. É o que está acontecendo agora, em todos os segmentos. Quem implantar primeiro tem vantagem real sobre a concorrência.</p>
+    <div class="agora-cards">
+      <div class="agora-card">
+        <div class="agora-num">79%</div>
+        <div class="agora-txt">dos consumidores preferem empresas que respondem rápido. Atendimento lento é cliente perdido.</div>
+        <span class="agora-fonte">Fonte: HubSpot</span>
+      </div>
+      <div class="agora-card">
+        <div class="agora-num">70%</div>
+        <div class="agora-txt">das decisões de compra são influenciadas pela qualidade do atendimento — não só pelo preço.</div>
+        <span class="agora-fonte">Fonte: PwC</span>
+      </div>
+      <div class="agora-card">
+        <div class="agora-num">3x</div>
+        <div class="agora-txt">mais produtividade em empresas que automatizaram processos repetitivos com IA no último ano.</div>
+        <span class="agora-fonte">Fonte: McKinsey</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divisa"></div>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="contato reveal">
+    <span class="sec-tag">Diagnóstico gratuito</span>
+    <h2 class="sec-titulo">A gente entende o seu negócio <strong>antes de propor qualquer coisa</strong>.</h2>
+    <p class="sec-apoio" style="margin:12px auto 0">Deixa seus dados — a Trívia entra em contato, ouve o negócio e te mostra onde a tecnologia pode ajudar de verdade.</p>
+    <div class="contato-form">
+      <div class="form-row">
+        <input type="text" placeholder="Seu nome" id="campo-nome">
+        <input type="tel" placeholder="WhatsApp com DDD" id="campo-wa">
+      </div>
+      <input type="text" placeholder="Nome da empresa" id="campo-empresa">
+      <select id="campo-ramo">
+        <option value="" disabled selected>Ramo do negócio</option>
+        <option>Comércio / Varejo</option>
+        <option>Salão / Estética</option>
+        <option>Clínica / Saúde</option>
+        <option>Restaurante / Alimentação</option>
+        <option>Construtora / Imóveis</option>
+        <option>Indústria / Fábrica</option>
+        <option>Agro</option>
+        <option>Prestador de serviços</option>
+        <option>Outro</option>
+      </select>
+      <textarea placeholder="O que mais trava o seu negócio hoje? (opcional)" id="campo-dor"></textarea>
+      <button class="btn-form" onclick="enviarWA()">
+        Quero meu diagnóstico gratuito
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.859L.057 23.57a.5.5 0 0 0 .613.613l5.701-1.476A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.367l-.36-.214-3.733.966.994-3.623-.234-.374A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+      </button>
+    </div>
+    <p class="contato-ou">ou chame direto no WhatsApp</p>
+    <div style="text-align:center">
+      <a class="link-wa" href="https://wa.me/5531971045733" target="_blank" rel="noopener">
+        (31) 97104-5733
+      </a>
+    </div>
+  </div>
+</section>
+
 </div>
+
+<footer>
+  <span class="marca-pe">Trí<span class="dourado">via</span></span>
+  <span class="sep">·</span>Soluções digitais
+  <span class="sep">·</span><a href="https://wa.me/5531971045733">(31) 97104-5733</a>
+  <span class="sep">·</span><a href="https://www.instagram.com/trivia.tecnologia" target="_blank">Instagram</a>
+  <span class="sep">·</span><a href="/privacidade.html">Privacidade</a>
+  <br><br>
+  <span style="font-size:.7rem;opacity:.4">GREYZIANE DEMORES DA SILVA · CNPJ 49.394.314/0001-05</span>
+</footer>
 
 <script>
-  function openLogin(){document.getElementById('loginModal').classList.add('open')}
-  function closeLogin(){document.getElementById('loginModal').classList.remove('open')}
-  document.getElementById('loginModal').addEventListener('click',function(e){if(e.target.id==='loginModal')closeLogin()});
-  function fazerLogin(){
-    var email=document.getElementById('l-email').value.trim();
-    var senha=document.getElementById('l-senha').value;
-    if(email==='cliente@trivia.com' && senha==='trivia123'){
-      window.location.href='painel.html';
-    }else{document.getElementById('l-err').style.display='block';}
+/* ===== FORMULÁRIO → WHATSAPP ===== */
+function enviarWA(){
+  var nome=document.getElementById('campo-nome').value.trim();
+  var wa=document.getElementById('campo-wa').value.trim();
+  var empresa=document.getElementById('campo-empresa').value.trim();
+  var ramo=document.getElementById('campo-ramo').value;
+  var dor=document.getElementById('campo-dor').value.trim();
+  if(!nome||!wa){alert('Por favor, preencha seu nome e WhatsApp.');return;}
+  var txt='Olá! Vim pelo site da Trívia e quero um diagnóstico gratuito.\n\n'
+    +'Nome: '+nome+'\n'
+    +'WhatsApp: '+wa+'\n'
+    +(empresa?'Empresa: '+empresa+'\n':'')
+    +(ramo?'Ramo: '+ramo+'\n':'')
+    +(dor?'Dor principal: '+dor:'');
+  window.open('https://wa.me/5531971045733?text='+encodeURIComponent(txt),'_blank');
+}
+
+/* ===== REVEAL ON SCROLL ===== */
+(function(){
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.reveal,.frente-card,.passo,.agora-card').forEach(function(el){el.classList.add('visivel');});
+    return;
   }
-  function logout(){document.getElementById('dash').style.display='none';document.getElementById('site').style.display='block';}
-  function goTab(el,id){
-    var links=document.querySelectorAll('.side a');for(var i=0;i<links.length;i++)links[i].classList.remove('active');
-    el.classList.add('active');
-    var tabs=document.querySelectorAll('.tab');for(var j=0;j<tabs.length;j++)tabs[j].style.display='none';
-    document.getElementById(id).style.display='block';
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visivel');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.reveal,.frente-card,.passo,.agora-card').forEach(function(el){obs.observe(el);});
+  // escalonamento de cards
+  document.querySelectorAll('.frente-card').forEach(function(el,i){
+    el.style.transitionDelay=(i*0.1)+'s';
+  });
+  document.querySelectorAll('.agora-card').forEach(function(el,i){
+    el.style.transitionDelay=(i*0.12)+'s';
+  });
+  document.querySelectorAll('.passo').forEach(function(el,i){
+    el.style.transitionDelay=(i*0.1)+'s';
+  });
+})();
+
+/* ===== CANVAS — partículas douradas ===== */
+(function(){
+  var canvas=document.getElementById('cena');
+  var ctx=canvas.getContext('2d');
+  var W,H,pts=[];
+  function dim(){
+    var DPR=Math.min(window.devicePixelRatio||1,2);
+    W=window.innerWidth;H=window.innerHeight;
+    canvas.width=W*DPR;canvas.height=H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
   }
-  function enviarLead(){
-    var nome=document.getElementById('f-nome').value.trim()||'(sem nome)';
-    var fone=document.getElementById('f-fone').value.trim();
-    var tipo=document.getElementById('f-tipo').value;
-    var txt='Olá! Sou '+nome+', tenho um negócio de '+tipo+(fone?' (meu WhatsApp: '+fone+')':'')+' e quero conhecer a Trívia.';
-    window.open('https://wa.me/5531996073905?text='+encodeURIComponent(txt),'_blank');
+  dim();
+  window.addEventListener('resize',function(){dim();init();});
+  function init(){
+    pts=[];
+    var n=Math.min(60,Math.round(W*H/14000));
+    for(var i=0;i<n;i++){
+      pts.push({
+        x:Math.random()*W,y:Math.random()*H,
+        vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,
+        r:.4+Math.random()*.8,
+        a:Math.random()*Math.PI*2,
+        f:Math.random()*6.28
+      });
+    }
   }
+  init();
+  var t=0;
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    t++;
+    pts.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      var al=.04+.06*Math.sin(t*.02+p.f);
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,7);
+      ctx.fillStyle='rgba(232,185,59,'+al+')';
+      ctx.fill();
+    });
+    requestAnimationFrame(loop);
+  })();
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    ctx.clearRect(0,0,W,H);
+  }
+})();
 </script>
 </body>
 </html>
